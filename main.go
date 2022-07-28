@@ -22,7 +22,7 @@ const splashMsg string = `
                                                 
 `
 const (
-	refreshInterval = 1
+	refreshInterval = 5
 	splashInterval  = 0
 )
 
@@ -83,13 +83,14 @@ func main() {
 	droplets := modules.NewDroplets(flags.APIKey)
 	mods = append(mods, droplets)
 
-	ll("Adding logger")
+	ll("starting...")
+
+	ll("adding logger")
 	root.AddItem(logger.GetView(), 0, 1, true)
 
-	ll("Adding droplets")
+	ll("adding droplets")
 	root.AddItem(droplets.GetView(), 0, 1, false)
 
-	ll("starting...")
 	ll(fmt.Sprintf("using api key %s", flags.APIKey))
 
 	// Start the go routine that updates the module content on a timer
@@ -98,6 +99,8 @@ func main() {
 	defer close(quit)
 
 	go func(refreshFunc func(tviewApp *tview.Application), tviewApp *tview.Application) {
+		refreshFunc(tviewApp)
+
 		for {
 			select {
 			case <-ticker.C:

@@ -1,6 +1,9 @@
 package modules
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/do"
@@ -64,5 +67,47 @@ func (d *Droplets) Refresh() {
 /* -------------------- Unexported Functions -------------------- */
 
 func (d *Droplets) data() string {
-	return "this is droplets"
+	droplets, err := d.dropletsFetch()
+	if err != nil {
+		return err.Error()
+	}
+
+	data := ""
+
+	for idx, droplet := range droplets {
+		data = data + fmt.Sprintf("%3d\t%12d\t%s\n", (idx+1), droplet.ID, droplet.Name)
+	}
+
+	return data
+}
+
+// dropletsFetch uses the DigitalOcean API to fetch information about all the available droplets
+func (d *Droplets) dropletsFetch() ([]godo.Droplet, error) {
+	dropletList := []godo.Droplet{}
+	opts := &godo.ListOptions{}
+
+	for {
+		doDroplets, resp, err := d.doClient.Droplets.List(context.Background(), opts)
+		if err != nil {
+			return dropletList, err
+		}
+
+		for _, doDroplet := range doDroplets {
+			dropletList = append(dropletList, doDroplet)
+		}
+
+		if resp.Links == nil || resp.Links.IsLastPage() {
+			break
+		}
+
+		page, err := resp.Links.CurrentPage()
+		if err != nil {
+			return dropletList, err
+		}
+
+		// Set the page we want for the next request
+		opts.Page = page + 1
+	}
+
+	return dropletList, nil
 }
