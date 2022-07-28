@@ -42,9 +42,9 @@ func newTviewApp(mods []modules.Module) *tview.Application {
 	for _, mod := range mods {
 		tviewFlex.AddItem(
 			mod.GetView(),
-			mod.GetProportion(),
-			mod.GetFixedSize(),
-			mod.GetFocus(),
+			// mod.GetProportion(),
+			// mod.GetFixedSize(),
+			// mod.GetFocus(),
 		)
 	}
 
