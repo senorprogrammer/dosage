@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/digitalocean/godo"
+	"github.com/senorprogrammer/dosage/do"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
 
@@ -22,12 +24,13 @@ const splashMsg string = `
 `
 const (
 	refreshInterval = 1
-	splashInterval  = 1
+	splashInterval  = 0
 )
 
 var (
-	logger *modules.Logger
-	mods   = []modules.Module{}
+	doClient *godo.Client
+	logger   *modules.Logger
+	mods     = []modules.Module{}
 )
 
 // Create the tview app containers and load the modules into it
@@ -35,7 +38,15 @@ func newTviewApp(mods []modules.Module) *tview.Application {
 	tviewApp := tview.NewApplication()
 
 	tviewFlex := tview.NewFlex()
-	tviewFlex.AddItem(logger.View(), 0, 1, true)
+
+	for _, mod := range mods {
+		tviewFlex.AddItem(
+			mod.GetView(),
+			mod.GetProportion(),
+			mod.GetFixedSize(),
+			mod.GetFocus(),
+		)
+	}
 
 	tviewApp.SetRoot(tviewFlex, true)
 
@@ -71,9 +82,15 @@ func main() {
 	fmt.Println(aurora.BrightGreen(splashMsg))
 	time.Sleep(splashInterval * time.Second)
 
+	// Create the DigitalOcean client
+	doClient = do.NewClient(flags.APIKey)
+
 	// Create the modules
-	logger = modules.NewLogger(30, 30)
+	logger = modules.NewLogger()
 	mods = append(mods, logger)
+
+	droplets := modules.NewDroplets(doClient)
+	mods = append(mods, droplets)
 
 	// Create the tview application
 	tviewApp := newTviewApp(mods)

@@ -4,7 +4,10 @@ import "github.com/rivo/tview"
 
 // Module defines the interface that all modules must adhere to
 type Module interface {
-	Data() string
+	GetFixedSize() int
+	GetFocus() bool
+	GetProportion() int
+	GetView() *tview.TextView
+
 	Refresh()
-	View() *tview.TextView
 }

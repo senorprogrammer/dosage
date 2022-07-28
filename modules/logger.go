@@ -4,10 +4,9 @@ import (
 	"github.com/rivo/tview"
 )
 
-// Logger stores the log messages sent to it and displays them in the Logger view
+// Logger stores and displays log messages emitted by other parts of the system.
 type Logger struct {
-	WidthPercent  int
-	HeightPercent int
+	BaseModule
 
 	Messages []string
 
@@ -15,30 +14,41 @@ type Logger struct {
 }
 
 // NewLogger creates and returns an instance of Logger
-func NewLogger(widthPerc, heightPerc int) *Logger {
+func NewLogger() *Logger {
 	view := tview.NewTextView()
 	view.SetTitle(" logger ")
 	view.SetBorder(true)
 	view.SetWrap(false)
 
 	return &Logger{
-		WidthPercent:  widthPerc,
-		HeightPercent: heightPerc,
+		BaseModule: BaseModule{
+			FixedSize:  0,
+			Focus:      true,
+			Proportion: 1,
+			View:       view,
+		},
 
 		Messages: []string{},
-
-		view: view,
 	}
 }
+
+/* -------------------- Exported Functions -------------------- */
 
 // Log prepends a log message to the Messages slice
 func (l *Logger) Log(msg string) {
 	l.Messages = append(l.Messages, msg)
 }
 
-// Data returns a string representation of the module
+// Refresh updates the view content with the latest data
+func (l *Logger) Refresh() {
+	l.GetView().SetText(l.data())
+}
+
+/* -------------------- Unexported Functions -------------------- */
+
+// data returns a string representation of the module
 // suitable for display onscreen
-func (l *Logger) Data() string {
+func (l *Logger) data() string {
 	data := ""
 
 	// Messages are displayed in LIFO order
@@ -47,14 +57,4 @@ func (l *Logger) Data() string {
 	}
 
 	return data
-}
-
-// Refresh updates the view content with the latest data
-func (l *Logger) Refresh() {
-	l.view.SetText(l.Data())
-}
-
-// View returns the tview.TextView used to display this module's data
-func (l *Logger) View() *tview.TextView {
-	return l.view
 }
