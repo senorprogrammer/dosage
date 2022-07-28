@@ -34,22 +34,15 @@ var (
 )
 
 // Create the tview app containers and load the modules into it
-func newTViewApp(mods []modules.Module) *tview.Application {
+func newTViewApp() (*tview.Application, *tview.Flex) {
+	root := tview.NewFlex()
+	root.SetBorder(true)
+	root.SetTitle(" dosage ")
+
 	tviewApp := tview.NewApplication()
-	// tviewFlex := tview.NewFlex()
+	tviewApp.SetRoot(root, true).SetFocus(root)
 
-	// for _, mod := range mods {
-	// 	tviewFlex.AddItem(
-	// 		mod.GetView(),
-	// 		mod.GetProportion(),
-	// 		mod.GetFixedSize(),
-	// 		mod.GetFocus(),
-	// 	)
-	// }
-
-	tviewApp.SetRoot(tviewFlex, true)
-
-	return tviewApp
+	return tviewApp, root
 }
 
 func ll(msg string) {
@@ -92,10 +85,10 @@ func main() {
 	mods = append(mods, droplets)
 
 	// Create the tview application
-	tviewApp := newTViewApp(mods)
+	tviewApp, root := newTViewApp()
 
-	tviewFlex := tview.NewFlex()
-	tviewFlex.AddItem(logger.GetView(), 0, 1, true)
+	root.AddItem(logger.GetView(), 0, 1, true)
+	root.AddItem(droplets.GetView(), 0, 1, false)
 
 	ll("starting...")
 	ll(fmt.Sprintf("using api key %s", flags.APIKey))
