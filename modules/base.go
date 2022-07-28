@@ -6,8 +6,22 @@ type BaseModule struct {
 	FixedSize  int
 	Focus      bool
 	Proportion int
+	Title      string
+	View       *tview.TextView
+}
 
-	View *tview.TextView
+func NewBaseModule(title string, fixed int, prop int, focus bool) BaseModule {
+	view := tview.NewTextView()
+	view.SetTitle(title)
+	view.SetBorder(true)
+	view.SetWrap(false)
+
+	return BaseModule{
+		FixedSize:  fixed,
+		Focus:      focus,
+		Proportion: prop,
+		View:       view,
+	}
 }
 
 /* -------------------- Exported Functions -------------------- */

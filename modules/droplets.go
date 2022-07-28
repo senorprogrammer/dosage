@@ -10,23 +10,12 @@ type Droplets struct {
 	BaseModule
 
 	doClient *godo.Client
-	view     *tview.TextView
 }
 
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(doClient *godo.Client) *Droplets {
-	view := tview.NewTextView()
-	view.SetTitle(" droplets ")
-	view.SetBorder(true)
-	view.SetWrap(false)
-
 	return &Droplets{
-		BaseModule: BaseModule{
-			FixedSize:  0,
-			Focus:      false,
-			Proportion: 1,
-			View:       view,
-		},
+		BaseModule: NewBaseModule("Droplets", 0, 1, false),
 
 		doClient: doClient,
 	}
@@ -41,7 +30,7 @@ func (d *Droplets) Refresh() {
 
 // View returns the tview.TextView used to display this module's data
 func (d *Droplets) View() *tview.TextView {
-	return d.view
+	return d.GetView()
 }
 
 /* -------------------- Unexported Functions -------------------- */

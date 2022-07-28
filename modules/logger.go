@@ -1,32 +1,16 @@
 package modules
 
-import (
-	"github.com/rivo/tview"
-)
-
 // Logger stores and displays log messages emitted by other parts of the system.
 type Logger struct {
 	BaseModule
-
 	Messages []string
-
-	view *tview.TextView
+	// view *tview.TextView
 }
 
 // NewLogger creates and returns an instance of Logger
 func NewLogger() *Logger {
-	view := tview.NewTextView()
-	view.SetTitle(" logger ")
-	view.SetBorder(true)
-	view.SetWrap(false)
-
 	return &Logger{
-		BaseModule: BaseModule{
-			FixedSize:  0,
-			Focus:      true,
-			Proportion: 1,
-			View:       view,
-		},
+		BaseModule: NewBaseModule("Logger", 0, 1, true),
 
 		Messages: []string{},
 	}
