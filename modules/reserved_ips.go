@@ -9,6 +9,7 @@ import (
 	"github.com/senorprogrammer/dosage/do"
 )
 
+// ReservedIPs displays a list of all your reserved IPs and which droplet they're attached to
 type ReservedIPs struct {
 	FixedSize  int
 	Focus      bool
