@@ -79,6 +79,7 @@ func main() {
 	tviewApp := newTviewApp(mods)
 
 	ll("starting...")
+	ll(fmt.Sprintf("using api key %s", flags.APIKey))
 
 	// Start the go routine that updates the module content on a timer
 	ticker := time.NewTicker(refreshInterval * time.Second)
