@@ -36,16 +36,16 @@ var (
 // Create the tview app containers and load the modules into it
 func newTViewApp(mods []modules.Module) *tview.Application {
 	tviewApp := tview.NewApplication()
-	tviewFlex := tview.NewFlex()
+	// tviewFlex := tview.NewFlex()
 
-	for _, mod := range mods {
-		tviewFlex.AddItem(
-			mod.GetView(),
-			mod.GetProportion(),
-			mod.GetFixedSize(),
-			mod.GetFocus(),
-		)
-	}
+	// for _, mod := range mods {
+	// 	tviewFlex.AddItem(
+	// 		mod.GetView(),
+	// 		mod.GetProportion(),
+	// 		mod.GetFixedSize(),
+	// 		mod.GetFocus(),
+	// 	)
+	// }
 
 	tviewApp.SetRoot(tviewFlex, true)
 
@@ -93,6 +93,9 @@ func main() {
 
 	// Create the tview application
 	tviewApp := newTViewApp(mods)
+
+	tviewFlex := tview.NewFlex()
+	tviewFlex.AddItem(logger.GetView(), 0, 1, true)
 
 	ll("starting...")
 	ll(fmt.Sprintf("using api key %s", flags.APIKey))
