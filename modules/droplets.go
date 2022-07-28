@@ -3,6 +3,7 @@ package modules
 import (
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/do"
 )
 
 // Droplets displays a list of all your available DigitalOcean droplets.
@@ -17,7 +18,7 @@ type Droplets struct {
 }
 
 // NewDroplets creates and returns an instance of Droplets
-func NewDroplets(doClient *godo.Client) *Droplets {
+func NewDroplets(apiKey string) *Droplets {
 	view := tview.NewTextView()
 	view.SetTitle("droplets")
 	view.SetWrap(false)
@@ -29,7 +30,7 @@ func NewDroplets(doClient *godo.Client) *Droplets {
 		Focus:      false,
 		View:       view,
 
-		doClient: doClient,
+		doClient: do.NewClient(apiKey),
 	}
 }
 

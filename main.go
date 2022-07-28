@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
-	"github.com/senorprogrammer/dosage/do"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
 
@@ -74,20 +73,20 @@ func main() {
 	fmt.Println(aurora.BrightGreen(splashMsg))
 	time.Sleep(splashInterval * time.Second)
 
-	// Create the DigitalOcean client
-	doClient = do.NewClient(flags.APIKey)
+	// Create the tview application
+	tviewApp, root := newTViewApp()
 
 	// Create the modules
 	logger = modules.NewLogger()
 	mods = append(mods, logger)
 
-	droplets := modules.NewDroplets(doClient)
+	droplets := modules.NewDroplets(flags.APIKey)
 	mods = append(mods, droplets)
 
-	// Create the tview application
-	tviewApp, root := newTViewApp()
-
+	ll("Adding logger")
 	root.AddItem(logger.GetView(), 0, 1, true)
+
+	ll("Adding droplets")
 	root.AddItem(droplets.GetView(), 0, 1, false)
 
 	ll("starting...")
