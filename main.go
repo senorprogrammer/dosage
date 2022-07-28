@@ -77,19 +77,23 @@ func main() {
 	tviewApp, root := newTViewApp()
 
 	// Create the modules
+
 	logger = modules.NewLogger()
+	ll("adding loger")
 	mods = append(mods, logger)
-
-	droplets := modules.NewDroplets(flags.APIKey)
-	mods = append(mods, droplets)
-
-	ll("starting...")
-
-	ll("adding logger")
 	root.AddItem(logger.GetView(), 0, 1, true)
 
 	ll("adding droplets")
+	droplets := modules.NewDroplets(flags.APIKey)
+	mods = append(mods, droplets)
 	root.AddItem(droplets.GetView(), 0, 1, false)
+
+	ll("reserved ips")
+	reservedIPs := modules.NewReservedIPs(flags.APIKey)
+	mods = append(mods, reservedIPs)
+	root.AddItem(reservedIPs.GetView(), 0, 1, false)
+
+	ll("starting...")
 
 	ll(fmt.Sprintf("using api key %s", flags.APIKey))
 

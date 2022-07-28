@@ -9,8 +9,7 @@ import (
 	"github.com/senorprogrammer/dosage/do"
 )
 
-// Droplets displays a list of all your available DigitalOcean droplets.
-type Droplets struct {
+type ReservedIPs struct {
 	FixedSize  int
 	Focus      bool
 	Proportion int
@@ -20,14 +19,14 @@ type Droplets struct {
 	doClient *godo.Client
 }
 
-// NewDroplets creates and returns an instance of Droplets
-func NewDroplets(apiKey string) *Droplets {
+// NewReservedIPs creates and returns an instance of Droplets
+func NewReservedIPs(apiKey string) *ReservedIPs {
 	view := tview.NewTextView()
-	view.SetTitle("droplets")
+	view.SetTitle("reserved ips")
 	view.SetWrap(false)
 	view.SetBorder(true)
 
-	return &Droplets{
+	return &ReservedIPs{
 		FixedSize:  0,
 		Proportion: 1,
 		Focus:      false,
@@ -40,60 +39,65 @@ func NewDroplets(apiKey string) *Droplets {
 /* -------------------- Exported Functions -------------------- */
 
 // GetFixedSize returns the fixedSize val for display
-func (d *Droplets) GetFixedSize() int {
-	return d.FixedSize
+func (r *ReservedIPs) GetFixedSize() int {
+	return r.FixedSize
 }
 
 // GetFocus returns the focus val for display
-func (d *Droplets) GetFocus() bool {
-	return d.Focus
+func (r *ReservedIPs) GetFocus() bool {
+	return r.Focus
 }
 
 // GetProportion returns the proportion for display
-func (d *Droplets) GetProportion() int {
-	return d.Proportion
+func (r *ReservedIPs) GetProportion() int {
+	return r.Proportion
 }
 
 // GetView returns the tview.TextView used to display this module's data
-func (d *Droplets) GetView() *tview.TextView {
-	return d.View
+func (r *ReservedIPs) GetView() *tview.TextView {
+	return r.View
 }
 
 // Refresh updates the view content with the latest data
-func (d *Droplets) Refresh() {
-	d.GetView().SetText(d.data())
+func (r *ReservedIPs) Refresh() {
+	r.GetView().SetText(r.data())
 }
 
 /* -------------------- Unexported Functions -------------------- */
 
-func (d *Droplets) data() string {
-	droplets, err := d.fetch()
+func (r *ReservedIPs) data() string {
+	reservedIPs, err := r.fetch()
 	if err != nil {
 		return err.Error()
 	}
 
 	data := ""
 
-	for idx, droplet := range droplets {
-		data = data + fmt.Sprintf("%3d\t%12d\t%s\n", (idx+1), droplet.ID, droplet.Name)
+	for idx, reservedIP := range reservedIPs {
+		dropletID := 0
+		if reservedIP.Droplet != nil {
+			dropletID = reservedIP.Droplet.ID
+		}
+
+		data = data + fmt.Sprintf("%3d\t%10d\t%16s\t%s\n", (idx+1), dropletID, reservedIP.IP, reservedIP.Region.Slug)
 	}
 
 	return data
 }
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
-func (d *Droplets) fetch() ([]godo.Droplet, error) {
-	dropletList := []godo.Droplet{}
+func (r *ReservedIPs) fetch() ([]godo.ReservedIP, error) {
+	reservedIPsList := []godo.ReservedIP{}
 	opts := &godo.ListOptions{}
 
 	for {
-		doDroplets, resp, err := d.doClient.Droplets.List(context.Background(), opts)
+		doReservedIPs, resp, err := r.doClient.ReservedIPs.List(context.Background(), opts)
 		if err != nil {
-			return dropletList, err
+			return reservedIPsList, err
 		}
 
-		for _, doDroplet := range doDroplets {
-			dropletList = append(dropletList, doDroplet)
+		for _, reservedIP := range doReservedIPs {
+			reservedIPsList = append(reservedIPsList, reservedIP)
 		}
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
@@ -102,12 +106,12 @@ func (d *Droplets) fetch() ([]godo.Droplet, error) {
 
 		page, err := resp.Links.CurrentPage()
 		if err != nil {
-			return dropletList, err
+			return reservedIPsList, err
 		}
 
 		// Set the page we want for the next request
 		opts.Page = page + 1
 	}
 
-	return dropletList, nil
+	return reservedIPsList, nil
 }
