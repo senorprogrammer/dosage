@@ -33,10 +33,12 @@ var (
 )
 
 // Create the tview app containers and load the modules into it
-func newTViewApp() (*tview.Application, *tview.Flex) {
-	root := tview.NewFlex()
+func newTViewApp() (*tview.Application, *tview.Grid) {
+	root := tview.NewGrid()
 	root.SetBorder(true)
 	root.SetTitle(" dosage ")
+	root.SetRows(8, 8, 8, 8, 8, 8, 8, 0)
+	root.SetColumns(48, 12, 12, 12, 12, 12, 12, 12, 12, 0)
 
 	tviewApp := tview.NewApplication()
 	tviewApp.SetRoot(root, true).SetFocus(root)
@@ -77,25 +79,42 @@ func main() {
 	tviewApp, root := newTViewApp()
 
 	// Create the modules
-
 	logger = modules.NewLogger()
-	ll("adding loger")
+	droplets := modules.NewDroplets(flags.APIKey)
+	reservedIPs := modules.NewReservedIPs(flags.APIKey)
+
 	mods = append(mods, logger)
-	root.AddItem(logger.GetView(), 0, 1, true)
+	mods = append(mods, droplets)
+	mods = append(mods, reservedIPs)
+
+	ll("adding logger")
+	root.AddItem(logger.GetView(), 0, 0, 8, 1, 0, 0, false)
 
 	ll("adding droplets")
-	droplets := modules.NewDroplets(flags.APIKey)
-	mods = append(mods, droplets)
-	root.AddItem(droplets.GetView(), 0, 1, false)
+	root.AddItem(droplets.GetView(), 0, 1, 2, 5, 0, 0, false)
 
-	ll("reserved ips")
-	reservedIPs := modules.NewReservedIPs(flags.APIKey)
-	mods = append(mods, reservedIPs)
-	root.AddItem(reservedIPs.GetView(), 0, 1, false)
+	ll("adding reservedips")
+	root.AddItem(reservedIPs.GetView(), 2, 1, 2, 5, 0, 0, false)
 
-	ll("starting...")
+	// root.AddItem(logger.GetView(), 0, 1, true).
+	// 	AddItem(tview.NewFlex().SetDirection(tview.FlexRow), 0, 1, false).
+	// 	AddItem(droplets.GetView(), 0, 1, false).
+	// 	AddItem(reservedIPs.GetView(), 12, 3, false)
 
-	ll(fmt.Sprintf("using api key %s", flags.APIKey))
+	// col := root.AddItem(tview.NewFlex().SetDirection(tview.FlexRow), 0, 1, false)
+
+	// ll("adding logger")
+	// root.AddItem(logger.GetView(), 0, 1, true)
+
+	// ll("adding droplets")
+	// col.
+
+	// ll("adding reserved ips")
+	// col.AddItem(reservedIPs.GetView(), 0, 3, false)
+
+	// ll("starting...")
+
+	// ll(fmt.Sprintf("using api key %s", flags.APIKey))
 
 	// Start the go routine that updates the module content on a timer
 	ticker := time.NewTicker(refreshInterval * time.Second)
