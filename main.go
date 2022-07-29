@@ -52,12 +52,12 @@ func main() {
 	pieces.DisplaySplashScreen()
 
 	tviewPages := tview.NewPages()
-	dosage := digitalocean.NewDosage(flags.APIKey, appName, tviewPages)
+	digOcean := digitalocean.NewDigitalOcean(flags.APIKey, appName, tviewPages)
 	tviewApp.SetRoot(tviewPages, true)
 
 	// Load the individual modules
 	logger = modules.NewLogger(" logger ")
-	mods = dosage.LoadModules(logger)
+	mods = digOcean.LoadModules(logger)
 
 	ll("starting app...")
 
@@ -70,10 +70,10 @@ func main() {
 
 		for {
 			select {
-			case <-dosage.RefreshTicker.C:
+			case <-digOcean.RefreshTicker.C:
 				refreshFunc(tviewApp)
 			case <-quit:
-				dosage.RefreshTicker.Stop()
+				digOcean.RefreshTicker.Stop()
 				return
 			}
 		}
