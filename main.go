@@ -51,12 +51,10 @@ func main() {
 	pieces.DisplaySplashScreen()
 
 	dosage := app.NewDosage(flags.APIKey, appName)
-	tviewApp := dosage.TViewApp
-	root := dosage.Root
 
 	// Load the individual modules
 	logger = modules.NewLogger(" logger ")
-	mods = dosage.LoadModules(root, logger)
+	mods = dosage.LoadModules(dosage.Root, logger)
 
 	ll("starting app...")
 
@@ -76,10 +74,10 @@ func main() {
 				return
 			}
 		}
-	}(refresh, tviewApp)
+	}(refresh, dosage.TViewApp)
 
 	// Run the underlying app loop
-	if err := tviewApp.Run(); err != nil {
+	if err := dosage.TViewApp.Run(); err != nil {
 		panic(err)
 	}
 }
