@@ -42,6 +42,7 @@ func loadModules(doClient *godo.Client, root *tview.Grid) []modules.Module {
 	reservedIPs := modules.NewReservedIPs(" reserved ips ", doClient)
 	databases := modules.NewDatabases(" databases ", doClient)
 	storage := modules.NewStorage(" volumes ", doClient)
+	billing := modules.NewBilling(" billing ", doClient)
 
 	mods = append(mods, logger)
 	mods = append(mods, account)
@@ -49,6 +50,7 @@ func loadModules(doClient *godo.Client, root *tview.Grid) []modules.Module {
 	mods = append(mods, reservedIPs)
 	mods = append(mods, databases)
 	mods = append(mods, storage)
+	mods = append(mods, billing)
 
 	for _, mod := range mods {
 		root.AddItem(
@@ -72,7 +74,7 @@ func newTViewApp() (*tview.Application, *tview.Grid) {
 	root.SetBorder(true)
 	root.SetTitle(" dosage ")
 	root.SetRows(8, 8, 8, 8, 8, 8, 8, 8, 8, 0)
-	root.SetColumns(12, 12, 12, 12, 12, 12, 12, 12, 12, 0)
+	root.SetColumns(12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 0)
 
 	tviewApp := tview.NewApplication()
 	tviewApp.SetRoot(root, true).SetFocus(root)
