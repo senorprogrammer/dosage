@@ -24,9 +24,9 @@ type DigitalOcean struct {
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
-func NewDigitalOcean(apiKey string, appName string, tviewPages *tview.Pages) *DigitalOcean {
-	grid := newGrid(appName)
-	tviewPages.AddPage(appName, grid, true, true)
+func NewDigitalOcean(apiKey string, tviewPages *tview.Pages) *DigitalOcean {
+	grid := newGrid(" DigitalOcean ")
+	tviewPages.AddPage("digitalocean", grid, true, true)
 
 	return &DigitalOcean{
 		DOClient:      godo.NewFromToken(apiKey),

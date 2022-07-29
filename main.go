@@ -52,7 +52,7 @@ func main() {
 	pieces.DisplaySplashScreen()
 
 	tviewPages := tview.NewPages()
-	digOcean := digitalocean.NewDigitalOcean(flags.APIKey, appName, tviewPages)
+	digOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages)
 	tviewApp.SetRoot(tviewPages, true)
 
 	// Load the individual modules
