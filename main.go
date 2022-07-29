@@ -8,7 +8,7 @@ import (
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
-	"github.com/senorprogrammer/dosage/services"
+	digitalocean "github.com/senorprogrammer/dosage/services/digitalocean"
 
 	"github.com/rivo/tview"
 )
@@ -52,7 +52,7 @@ func main() {
 	pieces.DisplaySplashScreen()
 
 	tviewPages := tview.NewPages()
-	dosage := services.NewDosage(flags.APIKey, appName, tviewPages)
+	dosage := digitalocean.NewDosage(flags.APIKey, appName, tviewPages)
 	tviewApp.SetRoot(tviewPages, true)
 
 	// Load the individual modules

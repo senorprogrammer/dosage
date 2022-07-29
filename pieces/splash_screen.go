@@ -15,9 +15,10 @@ const splashMsg string = `
 `
 
 const (
-	splashInterval = 0
+	splashInterval = 1
 )
 
+// DisplaySplashScreen displays the ASCII art on launch
 func DisplaySplashScreen() {
 	fmt.Println(aurora.BrightGreen(splashMsg))
 	time.Sleep(splashInterval * time.Second)

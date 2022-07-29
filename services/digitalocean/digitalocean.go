@@ -1,4 +1,4 @@
-package services
+package digitalocean
 
 import (
 	"fmt"
