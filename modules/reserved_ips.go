@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
-	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/pieces"
 )
 
@@ -34,14 +33,9 @@ func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 
 /* -------------------- Exported Functions -------------------- */
 
-// GetFocus returns the focus val for display
-func (r *ReservedIPs) GetFocus() bool {
-	return r.Focus
-}
-
-// GetView returns the tview.TextView used to display this module's data
-func (r *ReservedIPs) GetView() *tview.TextView {
-	return r.View
+// GetPositionData returns PositionData
+func (r *ReservedIPs) GetPositionData() *pieces.PositionData {
+	return &r.PositionData
 }
 
 // Refresh updates the view content with the latest data

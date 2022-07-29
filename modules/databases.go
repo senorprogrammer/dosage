@@ -33,6 +33,11 @@ func NewDatabases(title string, client *godo.Client) *Databases {
 
 /* -------------------- Exported Functions -------------------- */
 
+// GetPositionData returns PositionData
+func (d *Databases) GetPositionData() *pieces.PositionData {
+	return &d.PositionData
+}
+
 // Refresh updates the view content with the latest data
 func (d *Databases) Refresh() {
 	d.GetView().SetText(d.data())

@@ -33,6 +33,11 @@ func NewStorage(title string, client *godo.Client) *Storage {
 
 /* -------------------- Exported Functions -------------------- */
 
+// GetPositionData returns PositionData
+func (s *Storage) GetPositionData() *pieces.PositionData {
+	return &s.PositionData
+}
+
 // Refresh updates the view content with the latest data
 func (s *Storage) Refresh() {
 	s.GetView().SetText(s.data())

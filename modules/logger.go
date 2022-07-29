@@ -27,6 +27,11 @@ func NewLogger(title string) *Logger {
 
 /* -------------------- Exported Functions -------------------- */
 
+// GetPositionData returns PositionData
+func (l *Logger) GetPositionData() *pieces.PositionData {
+	return &l.PositionData
+}
+
 // Log prepends a log message to the Messages slice
 func (l *Logger) Log(msg string) {
 	l.Messages = append(l.Messages, msg)

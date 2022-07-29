@@ -33,6 +33,11 @@ func NewDroplets(title string, client *godo.Client) *Droplets {
 
 /* -------------------- Exported Functions -------------------- */
 
+// GetPositionData returns PositionData
+func (d *Droplets) GetPositionData() *pieces.PositionData {
+	return &d.PositionData
+}
+
 // Refresh updates the view content with the latest data
 func (d *Droplets) Refresh() {
 	d.GetView().SetText(d.data())

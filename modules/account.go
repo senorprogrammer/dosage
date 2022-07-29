@@ -33,6 +33,11 @@ func NewAccount(title string, client *godo.Client) *Account {
 
 /* -------------------- Exported Functions -------------------- */
 
+// GetPositionData returns PositionData
+func (a *Account) GetPositionData() *pieces.PositionData {
+	return &a.PositionData
+}
+
 // Refresh updates the view content with the latest data
 func (a *Account) Refresh() {
 	a.GetView().SetText(a.data())
