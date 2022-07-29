@@ -21,7 +21,7 @@ func NewDatabases(title string, client *godo.Client) *Databases {
 		Base: NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       4,
-			Col:       1,
+			Col:       2,
 			RowSpan:   2,
 			ColSpan:   9,
 			MinHeight: 0,

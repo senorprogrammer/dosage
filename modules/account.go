@@ -22,8 +22,8 @@ func NewAccount(title string, client *godo.Client) *Account {
 		PositionData: pieces.PositionData{
 			Row:       0,
 			Col:       0,
-			RowSpan:   1,
-			ColSpan:   1,
+			RowSpan:   2,
+			ColSpan:   2,
 			MinHeight: 0,
 			MinWidth:  0,
 		},
@@ -53,9 +53,10 @@ func (a *Account) data() string {
 	data += fmt.Sprintf("Status: %s %s\n", accountInfo.Status, accountInfo.StatusMessage)
 	data += fmt.Sprintf("Team: %s\n", accountInfo.Team.Name)
 	data += "\n"
-	data += fmt.Sprintf("Droplet limit: %d\n", accountInfo.DropletLimit)
-	data += fmt.Sprintf("Reserved IP limit: %d\n", accountInfo.ReservedIPLimit)
-	data += fmt.Sprintf("Volume limit: %d\n", accountInfo.VolumeLimit)
+	data += fmt.Sprintf("[green:]%s[white:]\n", "Limits")
+	data += fmt.Sprintf("%12s: %d\n", "Droplets", accountInfo.DropletLimit)
+	data += fmt.Sprintf("%12s: %d\n", "Reserved IPs", accountInfo.ReservedIPLimit)
+	data += fmt.Sprintf("%12s: %d\n", "Volumes", accountInfo.VolumeLimit)
 
 	return data
 }

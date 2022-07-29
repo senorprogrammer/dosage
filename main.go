@@ -37,8 +37,8 @@ func newTViewApp() (*tview.Application, *tview.Grid) {
 	root := tview.NewGrid()
 	root.SetBorder(true)
 	root.SetTitle(" dosage ")
-	root.SetRows(8, 8, 8, 8, 8, 8, 8, 0)
-	root.SetColumns(48, 12, 12, 12, 12, 12, 12, 12, 12, 0)
+	root.SetRows(8, 8, 8, 8, 8, 8, 8, 8, 8, 0)
+	root.SetColumns(12, 12, 12, 12, 12, 12, 12, 12, 12, 0)
 
 	tviewApp := tview.NewApplication()
 	tviewApp.SetRoot(root, true).SetFocus(root)

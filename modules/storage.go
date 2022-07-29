@@ -21,7 +21,7 @@ func NewStorage(title string, client *godo.Client) *Storage {
 		Base: NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
-			Col:       6,
+			Col:       7,
 			RowSpan:   2,
 			ColSpan:   4,
 			MinHeight: 0,

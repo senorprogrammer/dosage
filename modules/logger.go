@@ -14,10 +14,10 @@ func NewLogger(title string) *Logger {
 	return &Logger{
 		Base: NewBase(title),
 		PositionData: pieces.PositionData{
-			Row:       1,
+			Row:       2,
 			Col:       0,
 			RowSpan:   8,
-			ColSpan:   1,
+			ColSpan:   2,
 			MinHeight: 0,
 			MinWidth:  0,
 		},

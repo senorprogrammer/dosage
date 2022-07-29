@@ -22,7 +22,7 @@ func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 		Base: NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       2,
-			Col:       1,
+			Col:       2,
 			RowSpan:   2,
 			ColSpan:   5,
 			MinHeight: 0,

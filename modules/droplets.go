@@ -21,7 +21,7 @@ func NewDroplets(title string, client *godo.Client) *Droplets {
 		Base: NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
-			Col:       1,
+			Col:       2,
 			RowSpan:   2,
 			ColSpan:   5,
 			MinHeight: 0,

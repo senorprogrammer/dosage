@@ -18,6 +18,7 @@ func NewBase(title string) Base {
 	view.SetScrollable(true)
 	view.SetTitle(title)
 	view.SetWrap(false)
+	view.SetDynamicColors(true)
 
 	return Base{
 		Focus: false,
