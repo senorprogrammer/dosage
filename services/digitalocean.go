@@ -1,4 +1,4 @@
-package app
+package services
 
 import (
 	"fmt"
@@ -13,38 +13,39 @@ const (
 	refreshInterval = 5
 )
 
-// Dosage is the container application that handles everything. Everything.
-type Dosage struct {
+// DigitalOcean is the container application that handles all things DigitalOcean
+type DigitalOcean struct {
 	DOClient      *godo.Client
 	FocusedModule *modules.Module
 	Modules       []modules.Module
 	RefreshTicker *time.Ticker
 
-	TViewApp *tview.Application
-	Root     *tview.Grid
+	// TViewPages *tview.Pages
+	Grid *tview.Grid
 }
 
 // NewDosage creates and returns an instance of a Dosage app
-func NewDosage(apiKey string, appName string) *Dosage {
-	tviewApp, root := newTViewApp(appName)
+func NewDosage(apiKey string, appName string, tviewPages *tview.Pages) *DigitalOcean {
+	grid := newGrid(appName)
+	tviewPages.AddPage(appName, grid, true, true)
 
-	return &Dosage{
+	return &DigitalOcean{
 		DOClient:      godo.NewFromToken(apiKey),
 		FocusedModule: nil,
 		Modules:       []modules.Module{},
 		RefreshTicker: time.NewTicker(refreshInterval * time.Second),
-
-		TViewApp: tviewApp,
-		Root:     root,
+		Grid:          grid,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
 
-func (d *Dosage) LoadModules(root *tview.Grid, logger *modules.Logger) []modules.Module {
+// LoadModules instantiates each module and attaches it to the TView app
+// Pass the logger in because it's common across everything and needs to
+// be instantiated before the rest of the modules
+func (d *DigitalOcean) LoadModules(logger *modules.Logger) []modules.Module {
 	mods := []modules.Module{}
 
-	// logger := modules.NewLogger(" logger ")
 	account := modules.NewAccount(" account ", d.DOClient)
 	droplets := modules.NewDroplets(" droplets ", d.DOClient)
 	reservedIPs := modules.NewReservedIPs(" reserved ips ", d.DOClient)
@@ -61,7 +62,7 @@ func (d *Dosage) LoadModules(root *tview.Grid, logger *modules.Logger) []modules
 	mods = append(mods, billing)
 
 	for _, mod := range mods {
-		root.AddItem(
+		d.Grid.AddItem(
 			mod.GetView(),
 			mod.GetPositionData().GetRow(),
 			mod.GetPositionData().GetCol(),
@@ -76,27 +77,15 @@ func (d *Dosage) LoadModules(root *tview.Grid, logger *modules.Logger) []modules
 	return mods
 }
 
-// Refresh refreshes the content in all the modules
-func (d *Dosage) Refresh() {
-	for _, mod := range d.Modules {
-		mod.Refresh()
-	}
-
-	d.TViewApp.Draw()
-}
-
 /* -------------------- Unexported Functions -------------------- */
 
-// Create the tview app containers and load the modules into it
-func newTViewApp(appName string) (*tview.Application, *tview.Grid) {
-	root := tview.NewGrid()
-	root.SetBorder(true)
-	root.SetTitle(fmt.Sprintf(" %s ", appName))
-	root.SetRows(8, 8, 8, 8, 8, 8, 8, 8, 8, 0)
-	root.SetColumns(12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 0)
+// Create the grid that holds the module views
+func newGrid(appName string) *tview.Grid {
+	grid := tview.NewGrid()
+	grid.SetBorder(true)
+	grid.SetTitle(fmt.Sprintf(" %s ", appName))
+	grid.SetRows(8, 8, 8, 8, 8, 8, 8, 8, 8, 0)
+	grid.SetColumns(12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 0)
 
-	tviewApp := tview.NewApplication()
-	tviewApp.SetRoot(root, true).SetFocus(root)
-
-	return tviewApp, root
+	return grid
 }

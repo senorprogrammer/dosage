@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/digitalocean/godo"
-	"github.com/senorprogrammer/dosage/app"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
+	"github.com/senorprogrammer/dosage/services"
 
 	"github.com/rivo/tview"
 )
@@ -19,6 +19,7 @@ var (
 	doClient *godo.Client
 	logger   *modules.Logger
 	mods     = []modules.Module{}
+	tviewApp = tview.NewApplication()
 )
 
 func ll(msg string) {
@@ -50,11 +51,13 @@ func main() {
 
 	pieces.DisplaySplashScreen()
 
-	dosage := app.NewDosage(flags.APIKey, appName)
+	tviewPages := tview.NewPages()
+	dosage := services.NewDosage(flags.APIKey, appName, tviewPages)
+	tviewApp.SetRoot(tviewPages, true)
 
 	// Load the individual modules
 	logger = modules.NewLogger(" logger ")
-	mods = dosage.LoadModules(dosage.Root, logger)
+	mods = dosage.LoadModules(logger)
 
 	ll("starting app...")
 
@@ -74,10 +77,10 @@ func main() {
 				return
 			}
 		}
-	}(refresh, dosage.TViewApp)
+	}(refresh, tviewApp)
 
 	// Run the underlying app loop
-	if err := dosage.TViewApp.Run(); err != nil {
+	if err := tviewApp.Run(); err != nil {
 		panic(err)
 	}
 }
