@@ -78,17 +78,31 @@ func main() {
 	// Create the tview application
 	tviewApp, root := newTViewApp()
 
+	// Create the DO client
+	client := godo.NewFromToken(flags.APIKey)
+
 	// Create the modules
-	logger = modules.NewLogger()
-	droplets := modules.NewDroplets(flags.APIKey)
-	reservedIPs := modules.NewReservedIPs(flags.APIKey)
+	logger = modules.NewLogger(" logger ")
+	account := modules.NewAccount(" account ", client)
+	droplets := modules.NewDroplets(" droplets ", client)
+	reservedIPs := modules.NewReservedIPs(" reserved ips ", client)
+	databases := modules.NewDatabases(" databases ", client)
 
 	mods = append(mods, logger)
+	mods = append(mods, account)
 	mods = append(mods, droplets)
 	mods = append(mods, reservedIPs)
+	mods = append(mods, databases)
+
+	ll("starting...")
+
+	// row, col, rowspan, colSpan, minHeight, minWidth, focus
 
 	ll("adding logger")
-	root.AddItem(logger.GetView(), 0, 0, 8, 1, 0, 0, false)
+	root.AddItem(logger.GetView(), 1, 0, 8, 1, 0, 0, false)
+
+	ll("adding account")
+	root.AddItem(account.GetView(), 0, 0, 1, 1, 0, 0, false)
 
 	ll("adding droplets")
 	root.AddItem(droplets.GetView(), 0, 1, 2, 5, 0, 0, false)
@@ -96,25 +110,8 @@ func main() {
 	ll("adding reservedips")
 	root.AddItem(reservedIPs.GetView(), 2, 1, 2, 5, 0, 0, false)
 
-	// root.AddItem(logger.GetView(), 0, 1, true).
-	// 	AddItem(tview.NewFlex().SetDirection(tview.FlexRow), 0, 1, false).
-	// 	AddItem(droplets.GetView(), 0, 1, false).
-	// 	AddItem(reservedIPs.GetView(), 12, 3, false)
-
-	// col := root.AddItem(tview.NewFlex().SetDirection(tview.FlexRow), 0, 1, false)
-
-	// ll("adding logger")
-	// root.AddItem(logger.GetView(), 0, 1, true)
-
-	// ll("adding droplets")
-	// col.
-
-	// ll("adding reserved ips")
-	// col.AddItem(reservedIPs.GetView(), 0, 3, false)
-
-	// ll("starting...")
-
-	// ll(fmt.Sprintf("using api key %s", flags.APIKey))
+	ll("adding databases")
+	root.AddItem(databases.GetView(), 4, 1, 2, 9, 0, 0, false)
 
 	// Start the go routine that updates the module content on a timer
 	ticker := time.NewTicker(refreshInterval * time.Second)

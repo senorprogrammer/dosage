@@ -8,8 +8,8 @@ import (
 	"github.com/rivo/tview"
 )
 
-// Droplets displays a list of all your available DigitalOcean droplets.
-type Droplets struct {
+// Databases is databases
+type Databases struct {
 	Focus bool
 	Title string
 	View  *tview.TextView
@@ -17,15 +17,15 @@ type Droplets struct {
 	doClient *godo.Client
 }
 
-// NewDroplets creates and returns an instance of Droplets
-func NewDroplets(title string, client *godo.Client) *Droplets {
+// NewDatabases creates and returns an instance of Databases
+func NewDatabases(title string, client *godo.Client) *Databases {
 	view := tview.NewTextView()
 	view.SetTitle(title)
 	view.SetWrap(false)
 	view.SetBorder(true)
 	view.SetScrollable(true)
 
-	return &Droplets{
+	return &Databases{
 		Focus: false,
 		View:  view,
 
@@ -36,54 +36,62 @@ func NewDroplets(title string, client *godo.Client) *Droplets {
 /* -------------------- Exported Functions -------------------- */
 
 // GetFocus returns the focus val for display
-func (d *Droplets) GetFocus() bool {
+func (d *Databases) GetFocus() bool {
 	return d.Focus
 }
 
 // GetView returns the tview.TextView used to display this module's data
-func (d *Droplets) GetView() *tview.TextView {
+func (d *Databases) GetView() *tview.TextView {
 	return d.View
 }
 
 // Refresh updates the view content with the latest data
-func (d *Droplets) Refresh() {
+func (d *Databases) Refresh() {
 	d.GetView().SetText(d.data())
 }
 
 /* -------------------- Unexported Functions -------------------- */
 
-func (d *Droplets) data() string {
-	droplets, err := d.fetch()
+func (d *Databases) data() string {
+	databases, err := d.fetch()
 	if err != nil {
 		return err.Error()
 	}
 
-	if len(droplets) == 0 {
+	if len(databases) == 0 {
 		return "none"
 	}
 
 	data := ""
 
-	for idx, droplet := range droplets {
-		data = data + fmt.Sprintf("%3d\t%12d\t%s\n", (idx+1), droplet.ID, droplet.Name)
+	for idx, database := range databases {
+		data = data + fmt.Sprintf(
+			"%3d\t%s\t%s\t%s\t%s\t%s\n",
+			(idx+1),
+			database.Name,
+			database.EngineSlug,
+			database.Status,
+			database.SizeSlug,
+			database.RegionSlug,
+		)
 	}
 
 	return data
 }
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
-func (d *Droplets) fetch() ([]godo.Droplet, error) {
-	dropletList := []godo.Droplet{}
+func (d *Databases) fetch() ([]godo.Database, error) {
+	databaseList := []godo.Database{}
 	opts := &godo.ListOptions{}
 
 	for {
-		doDroplets, resp, err := d.doClient.Droplets.List(context.Background(), opts)
+		doDbs, resp, err := d.doClient.Databases.List(context.Background(), opts)
 		if err != nil {
-			return dropletList, err
+			return databaseList, err
 		}
 
-		for _, doDroplet := range doDroplets {
-			dropletList = append(dropletList, doDroplet)
+		for _, doDb := range doDbs {
+			databaseList = append(databaseList, doDb)
 		}
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
@@ -92,12 +100,12 @@ func (d *Droplets) fetch() ([]godo.Droplet, error) {
 
 		page, err := resp.Links.CurrentPage()
 		if err != nil {
-			return dropletList, err
+			return databaseList, err
 		}
 
 		// Set the page we want for the next request
 		opts.Page = page + 1
 	}
 
-	return dropletList, nil
+	return databaseList, nil
 }

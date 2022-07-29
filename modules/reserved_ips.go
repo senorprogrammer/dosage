@@ -6,52 +6,38 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
-	"github.com/senorprogrammer/dosage/do"
 )
 
 // ReservedIPs displays a list of all your reserved IPs and which droplet they're attached to
 type ReservedIPs struct {
-	FixedSize  int
-	Focus      bool
-	Proportion int
-	Title      string
-	View       *tview.TextView
+	Focus bool
+	Title string
+	View  *tview.TextView
 
 	doClient *godo.Client
 }
 
 // NewReservedIPs creates and returns an instance of Droplets
-func NewReservedIPs(apiKey string) *ReservedIPs {
+func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 	view := tview.NewTextView()
-	view.SetTitle("reserved ips")
+	view.SetTitle(title)
 	view.SetWrap(false)
 	view.SetBorder(true)
+	view.SetScrollable(true)
 
 	return &ReservedIPs{
-		FixedSize:  0,
-		Proportion: 1,
-		Focus:      false,
-		View:       view,
+		Focus: false,
+		View:  view,
 
-		doClient: do.NewClient(apiKey),
+		doClient: client,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
 
-// GetFixedSize returns the fixedSize val for display
-func (r *ReservedIPs) GetFixedSize() int {
-	return r.FixedSize
-}
-
 // GetFocus returns the focus val for display
 func (r *ReservedIPs) GetFocus() bool {
 	return r.Focus
-}
-
-// GetProportion returns the proportion for display
-func (r *ReservedIPs) GetProportion() int {
-	return r.Proportion
 }
 
 // GetView returns the tview.TextView used to display this module's data
@@ -70,6 +56,10 @@ func (r *ReservedIPs) data() string {
 	reservedIPs, err := r.fetch()
 	if err != nil {
 		return err.Error()
+	}
+
+	if len(reservedIPs) == 0 {
+		return "none"
 	}
 
 	data := ""

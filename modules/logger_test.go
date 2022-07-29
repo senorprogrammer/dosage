@@ -31,7 +31,7 @@ func Test_Log(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			logger := NewLogger()
+			logger := NewLogger("logger")
 			logger.Log("dogs")
 
 			logger.Log(tt.msg)

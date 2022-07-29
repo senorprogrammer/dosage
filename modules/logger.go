@@ -4,26 +4,23 @@ import "github.com/rivo/tview"
 
 // Logger stores and displays log messages emitted by other parts of the system.
 type Logger struct {
-	FixedSize  int
-	Focus      bool
-	Proportion int
-	Title      string
-	View       *tview.TextView
-	Messages   []string
+	Focus    bool
+	Title    string
+	View     *tview.TextView
+	Messages []string
 }
 
 // NewLogger creates and returns an instance of Logger
-func NewLogger() *Logger {
+func NewLogger(title string) *Logger {
 	view := tview.NewTextView()
-	view.SetTitle("logger")
+	view.SetTitle(title)
 	view.SetWrap(false)
 	view.SetBorder(true)
+	view.SetScrollable(true)
 
 	return &Logger{
-		FixedSize:  30,
-		Proportion: 1,
-		Focus:      false,
-		View:       view,
+		Focus: false,
+		View:  view,
 
 		Messages: []string{},
 	}
@@ -31,19 +28,9 @@ func NewLogger() *Logger {
 
 /* -------------------- Exported Functions -------------------- */
 
-// GetFixedSize returns the fixedSize val for display
-func (l *Logger) GetFixedSize() int {
-	return l.FixedSize
-}
-
 // GetFocus returns the focus val for display
 func (l *Logger) GetFocus() bool {
 	return l.Focus
-}
-
-// GetProportion returns the proportion for display
-func (l *Logger) GetProportion() int {
-	return l.Proportion
 }
 
 // GetView returns the tview.TextView used to display this module's data
