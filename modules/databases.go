@@ -5,18 +5,28 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
+	"github.com/senorprogrammer/dosage/pieces"
 )
 
 // Databases is database
 type Databases struct {
 	Base
-	doClient *godo.Client
+	PositionData pieces.PositionData
+	doClient     *godo.Client
 }
 
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, client *godo.Client) *Databases {
 	return &Databases{
-		Base:     NewBase(title),
+		Base: NewBase(title),
+		PositionData: pieces.PositionData{
+			Row:       4,
+			Col:       1,
+			RowSpan:   2,
+			ColSpan:   9,
+			MinHeight: 0,
+			MinWidth:  0,
+		},
 		doClient: client,
 	}
 }

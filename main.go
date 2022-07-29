@@ -87,31 +87,88 @@ func main() {
 	droplets := modules.NewDroplets(" droplets ", client)
 	reservedIPs := modules.NewReservedIPs(" reserved ips ", client)
 	databases := modules.NewDatabases(" databases ", client)
+	storage := modules.NewStorage(" volumes ", client)
 
 	mods = append(mods, logger)
 	mods = append(mods, account)
 	mods = append(mods, droplets)
 	mods = append(mods, reservedIPs)
 	mods = append(mods, databases)
+	mods = append(mods, storage)
 
 	ll("starting...")
 
-	// row, col, rowspan, colSpan, minHeight, minWidth, focus
-
 	ll("adding logger")
-	root.AddItem(logger.GetView(), 1, 0, 8, 1, 0, 0, false)
+	root.AddItem(
+		logger.GetView(),
+		logger.PositionData.Row,
+		logger.PositionData.Col,
+		logger.PositionData.RowSpan,
+		logger.PositionData.ColSpan,
+		logger.PositionData.MinWidth,
+		logger.PositionData.MinHeight,
+		false,
+	)
 
 	ll("adding account")
-	root.AddItem(account.GetView(), 0, 0, 1, 1, 0, 0, false)
+	root.AddItem(
+		account.GetView(),
+		account.PositionData.Row,
+		account.PositionData.Col,
+		account.PositionData.RowSpan,
+		account.PositionData.ColSpan,
+		account.PositionData.MinWidth,
+		account.PositionData.MinHeight,
+		false,
+	)
 
 	ll("adding droplets")
-	root.AddItem(droplets.GetView(), 0, 1, 2, 5, 0, 0, false)
+	root.AddItem(
+		droplets.GetView(),
+		droplets.PositionData.Row,
+		droplets.PositionData.Col,
+		droplets.PositionData.RowSpan,
+		droplets.PositionData.ColSpan,
+		droplets.PositionData.MinWidth,
+		droplets.PositionData.MinHeight,
+		false,
+	)
 
 	ll("adding reservedips")
-	root.AddItem(reservedIPs.GetView(), 2, 1, 2, 5, 0, 0, false)
+	root.AddItem(
+		reservedIPs.GetView(),
+		reservedIPs.PositionData.Row,
+		reservedIPs.PositionData.Col,
+		reservedIPs.PositionData.RowSpan,
+		reservedIPs.PositionData.ColSpan,
+		reservedIPs.PositionData.MinWidth,
+		reservedIPs.PositionData.MinHeight,
+		false,
+	)
 
 	ll("adding databases")
-	root.AddItem(databases.GetView(), 4, 1, 2, 9, 0, 0, false)
+	root.AddItem(
+		databases.GetView(),
+		databases.PositionData.Row,
+		databases.PositionData.Col,
+		databases.PositionData.RowSpan,
+		databases.PositionData.ColSpan,
+		databases.PositionData.MinWidth,
+		databases.PositionData.MinHeight,
+		false,
+	)
+
+	ll("adding storage")
+	root.AddItem(
+		storage.GetView(),
+		storage.PositionData.Row,
+		storage.PositionData.Col,
+		storage.PositionData.RowSpan,
+		storage.PositionData.ColSpan,
+		storage.PositionData.MinWidth,
+		storage.PositionData.MinHeight,
+		false,
+	)
 
 	// Start the go routine that updates the module content on a timer
 	ticker := time.NewTicker(refreshInterval * time.Second)

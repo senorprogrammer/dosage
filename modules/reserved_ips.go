@@ -6,29 +6,28 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/pieces"
 )
 
 // ReservedIPs displays a list of all your reserved IPs and which droplet they're attached to
 type ReservedIPs struct {
-	Focus bool
-	Title string
-	View  *tview.TextView
-
-	doClient *godo.Client
+	Base
+	PositionData pieces.PositionData
+	doClient     *godo.Client
 }
 
 // NewReservedIPs creates and returns an instance of Droplets
 func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
-	view := tview.NewTextView()
-	view.SetTitle(title)
-	view.SetWrap(false)
-	view.SetBorder(true)
-	view.SetScrollable(true)
-
 	return &ReservedIPs{
-		Focus: false,
-		View:  view,
-
+		Base: NewBase(title),
+		PositionData: pieces.PositionData{
+			Row:       2,
+			Col:       1,
+			RowSpan:   2,
+			ColSpan:   5,
+			MinHeight: 0,
+			MinWidth:  0,
+		},
 		doClient: client,
 	}
 }

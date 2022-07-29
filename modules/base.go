@@ -1,6 +1,8 @@
 package modules
 
-import "github.com/rivo/tview"
+import (
+	"github.com/rivo/tview"
+)
 
 // Base is base
 type Base struct {

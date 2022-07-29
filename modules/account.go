@@ -5,18 +5,28 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
+	"github.com/senorprogrammer/dosage/pieces"
 )
 
 // Account is account
 type Account struct {
 	Base
-	doClient *godo.Client
+	PositionData pieces.PositionData
+	doClient     *godo.Client
 }
 
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, client *godo.Client) *Account {
 	return &Account{
-		Base:     NewBase(title),
+		Base: NewBase(title),
+		PositionData: pieces.PositionData{
+			Row:       0,
+			Col:       0,
+			RowSpan:   1,
+			ColSpan:   1,
+			MinHeight: 0,
+			MinWidth:  0,
+		},
 		doClient: client,
 	}
 }

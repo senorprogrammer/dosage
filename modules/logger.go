@@ -1,15 +1,26 @@
 package modules
 
+import "github.com/senorprogrammer/dosage/pieces"
+
 // Logger stores and displays log messages emitted by other parts of the system.
 type Logger struct {
 	Base
-	Messages []string
+	PositionData pieces.PositionData
+	Messages     []string
 }
 
 // NewLogger creates and returns an instance of Logger
 func NewLogger(title string) *Logger {
 	return &Logger{
-		Base:     NewBase(title),
+		Base: NewBase(title),
+		PositionData: pieces.PositionData{
+			Row:       1,
+			Col:       0,
+			RowSpan:   8,
+			ColSpan:   1,
+			MinHeight: 0,
+			MinWidth:  0,
+		},
 		Messages: []string{},
 	}
 }

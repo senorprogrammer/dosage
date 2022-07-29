@@ -5,18 +5,28 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
+	"github.com/senorprogrammer/dosage/pieces"
 )
 
 // Droplets displays a list of all your available DigitalOcean droplets.
 type Droplets struct {
 	Base
-	doClient *godo.Client
+	PositionData pieces.PositionData
+	doClient     *godo.Client
 }
 
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, client *godo.Client) *Droplets {
 	return &Droplets{
-		Base:     NewBase(title),
+		Base: NewBase(title),
+		PositionData: pieces.PositionData{
+			Row:       0,
+			Col:       1,
+			RowSpan:   2,
+			ColSpan:   5,
+			MinHeight: 0,
+			MinWidth:  0,
+		},
 		doClient: client,
 	}
 }
