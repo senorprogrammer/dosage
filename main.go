@@ -41,7 +41,7 @@ func loadModules(doClient *godo.Client, root *tview.Grid) []modules.Module {
 	droplets := modules.NewDroplets(" droplets ", doClient)
 	reservedIPs := modules.NewReservedIPs(" reserved ips ", doClient)
 	databases := modules.NewDatabases(" databases ", doClient)
-	storage := modules.NewStorage(" volumes ", doClient)
+	storage := modules.NewVolumes(" volumes ", doClient)
 	billing := modules.NewBilling(" billing ", doClient)
 
 	mods = append(mods, logger)
@@ -88,6 +88,8 @@ func ll(msg string) {
 
 // refresh loops through all the modules and updates their contents
 func refresh(tviewApp *tview.Application) {
+	ll("refreshing...")
+
 	for _, mod := range mods {
 		mod.Refresh()
 	}

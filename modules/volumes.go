@@ -8,16 +8,16 @@ import (
 	"github.com/senorprogrammer/dosage/pieces"
 )
 
-// Storage is storage
-type Storage struct {
+// Volumes is storage
+type Volumes struct {
 	Base
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
 
-// NewStorage creates and returns an instance of Storage
-func NewStorage(title string, client *godo.Client) *Storage {
-	return &Storage{
+// NewVolumes creates and returns an instance of Storage
+func NewVolumes(title string, client *godo.Client) *Volumes {
+	return &Volumes{
 		Base: NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
@@ -34,19 +34,19 @@ func NewStorage(title string, client *godo.Client) *Storage {
 /* -------------------- Exported Functions -------------------- */
 
 // GetPositionData returns PositionData
-func (s *Storage) GetPositionData() *pieces.PositionData {
-	return &s.PositionData
+func (v *Volumes) GetPositionData() *pieces.PositionData {
+	return &v.PositionData
 }
 
 // Refresh updates the view content with the latest data
-func (s *Storage) Refresh() {
-	s.GetView().SetText(s.data())
+func (v *Volumes) Refresh() {
+	v.GetView().SetText(v.data())
 }
 
 /* -------------------- Unexported Functions -------------------- */
 
-func (s *Storage) data() string {
-	volumes, err := s.fetch()
+func (v *Volumes) data() string {
+	volumes, err := v.fetch()
 	if err != nil {
 		return err.Error()
 	}
@@ -72,11 +72,11 @@ func (s *Storage) data() string {
 }
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
-func (s *Storage) fetch() ([]godo.Volume, error) {
+func (v *Volumes) fetch() ([]godo.Volume, error) {
 	volumesList := []godo.Volume{}
 	opts := &godo.ListVolumeParams{}
 
-	doVols, _, err := s.doClient.Storage.ListVolumes(context.Background(), opts)
+	doVols, _, err := v.doClient.Storage.ListVolumes(context.Background(), opts)
 	if err != nil {
 		return volumesList, err
 	}

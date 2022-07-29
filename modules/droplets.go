@@ -58,7 +58,13 @@ func (d *Droplets) data() string {
 	data := ""
 
 	for idx, droplet := range droplets {
-		data = data + fmt.Sprintf("%3d\t%12d\t%s\n", (idx+1), droplet.ID, droplet.Name)
+		data = data + fmt.Sprintf(
+			"%3d\t%10d\t%s\t%s\n",
+			(idx+1),
+			droplet.ID,
+			droplet.Name,
+			pieces.ColorForState(droplet.Status, droplet.Status),
+		)
 	}
 
 	return data

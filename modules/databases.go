@@ -59,13 +59,14 @@ func (d *Databases) data() string {
 
 	for idx, database := range databases {
 		data = data + fmt.Sprintf(
-			"%3d\t%s\t%s\t%s\t%s\t%s\n",
+			"%3d\t%s\t%s\t%s\t%s\t%s\t%v\n",
 			(idx+1),
 			database.Name,
 			database.EngineSlug,
-			database.Status,
+			pieces.ColorForState(database.Status, database.Status),
 			database.SizeSlug,
 			database.RegionSlug,
+			database.Tags,
 		)
 	}
 
