@@ -1,8 +1,6 @@
 package flags
 
 import (
-	"fmt"
-
 	goFlags "github.com/jessevdk/go-flags"
 )
 
@@ -20,11 +18,10 @@ func NewFlags() *Flags {
 // Parse parses the incoming flags
 func (flags *Flags) Parse() error {
 	parser := goFlags.NewParser(flags, goFlags.Default)
+
 	if _, err := parser.Parse(); err != nil {
 		return err
 	}
-
-	fmt.Println(flags.APIKey)
 
 	return nil
 }
