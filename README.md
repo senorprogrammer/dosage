@@ -1,6 +1,6 @@
 # DOsage
 
-A terminal-based dashboard for your DigitalOcean resources.
+A terminal-based dashboard for DigitalOcean resources.
 
 ## Usage
 
