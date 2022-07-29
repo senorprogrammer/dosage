@@ -5,45 +5,23 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
-	"github.com/rivo/tview"
 )
 
 // Droplets displays a list of all your available DigitalOcean droplets.
 type Droplets struct {
-	Focus bool
-	Title string
-	View  *tview.TextView
-
+	Base
 	doClient *godo.Client
 }
 
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, client *godo.Client) *Droplets {
-	view := tview.NewTextView()
-	view.SetTitle(title)
-	view.SetWrap(false)
-	view.SetBorder(true)
-	view.SetScrollable(true)
-
 	return &Droplets{
-		Focus: false,
-		View:  view,
-
+		Base:     NewBase(title),
 		doClient: client,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
-
-// GetFocus returns the focus val for display
-func (d *Droplets) GetFocus() bool {
-	return d.Focus
-}
-
-// GetView returns the tview.TextView used to display this module's data
-func (d *Droplets) GetView() *tview.TextView {
-	return d.View
-}
 
 // Refresh updates the view content with the latest data
 func (d *Droplets) Refresh() {

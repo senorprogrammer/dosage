@@ -5,45 +5,23 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
-	"github.com/rivo/tview"
 )
 
-// Databases is databases
+// Databases is database
 type Databases struct {
-	Focus bool
-	Title string
-	View  *tview.TextView
-
+	Base
 	doClient *godo.Client
 }
 
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, client *godo.Client) *Databases {
-	view := tview.NewTextView()
-	view.SetTitle(title)
-	view.SetWrap(false)
-	view.SetBorder(true)
-	view.SetScrollable(true)
-
 	return &Databases{
-		Focus: false,
-		View:  view,
-
+		Base:     NewBase(title),
 		doClient: client,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
-
-// GetFocus returns the focus val for display
-func (d *Databases) GetFocus() bool {
-	return d.Focus
-}
-
-// GetView returns the tview.TextView used to display this module's data
-func (d *Databases) GetView() *tview.TextView {
-	return d.View
-}
 
 // Refresh updates the view content with the latest data
 func (d *Databases) Refresh() {

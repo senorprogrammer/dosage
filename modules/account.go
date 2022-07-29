@@ -5,45 +5,23 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
-	"github.com/rivo/tview"
 )
 
 // Account is account
 type Account struct {
-	Focus bool
-	Title string
-	View  *tview.TextView
-
+	Base
 	doClient *godo.Client
 }
 
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, client *godo.Client) *Account {
-	view := tview.NewTextView()
-	view.SetTitle(title)
-	view.SetWrap(false)
-	view.SetBorder(true)
-	view.SetScrollable(true)
-
 	return &Account{
-		Focus: false,
-		View:  view,
-
+		Base:     NewBase(title),
 		doClient: client,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
-
-// GetFocus returns the focus val for display
-func (a *Account) GetFocus() bool {
-	return a.Focus
-}
-
-// GetView returns the tview.TextView used to display this module's data
-func (a *Account) GetView() *tview.TextView {
-	return a.View
-}
 
 // Refresh updates the view content with the latest data
 func (a *Account) Refresh() {
