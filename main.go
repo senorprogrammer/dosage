@@ -29,6 +29,8 @@ func ll(msg string) {
 func refresh(tviewApp *tview.Application) {
 	ll("refreshing...")
 
+	logger.Refresh()
+
 	for _, svc := range svcs {
 		svc.Refresh()
 	}
@@ -56,8 +58,8 @@ func main() {
 	logger = modules.NewLogger(" logger ")
 
 	// Load the services
-	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages)
-	digitalOcean.LoadModules(logger)
+	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages, logger)
+	digitalOcean.LoadModules()
 	svcs = append(svcs, digitalOcean)
 
 	ll("starting app...")

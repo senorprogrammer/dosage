@@ -17,6 +17,7 @@ const (
 type DigitalOcean struct {
 	DOClient      *godo.Client
 	FocusedModule *modules.Module
+	Logger        *modules.Logger
 	Modules       []modules.Module
 	Name          string
 	RefreshTicker *time.Ticker
@@ -25,13 +26,14 @@ type DigitalOcean struct {
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
-func NewDigitalOcean(apiKey string, tviewPages *tview.Pages) *DigitalOcean {
+func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Logger) *DigitalOcean {
 	grid := newGrid(" DigitalOcean ")
 	tviewPages.AddPage("digitalocean", grid, true, true)
 
 	return &DigitalOcean{
 		DOClient:      godo.NewFromToken(apiKey),
 		FocusedModule: nil,
+		Logger:        logger,
 		Modules:       []modules.Module{},
 		Name:          "DigitalOcean",
 		RefreshTicker: time.NewTicker(refreshInterval * time.Second),
@@ -49,9 +51,7 @@ func (d *DigitalOcean) GetName() string {
 // LoadModules instantiates each module and attaches it to the TView app
 // Pass the logger in because it's common across everything and needs to
 // be instantiated before the rest of the modules
-func (d *DigitalOcean) LoadModules(logger *modules.Logger) {
-	// mods := []modules.Module{}
-
+func (d *DigitalOcean) LoadModules() {
 	account := modules.NewAccount(" account ", d.DOClient)
 	billing := modules.NewBilling(" billing ", d.DOClient)
 	databases := modules.NewDatabases(" databases ", d.DOClient)
@@ -59,11 +59,12 @@ func (d *DigitalOcean) LoadModules(logger *modules.Logger) {
 	reservedIPs := modules.NewReservedIPs(" reserved ips ", d.DOClient)
 	storage := modules.NewVolumes(" volumes ", d.DOClient)
 
+	d.Modules = append(d.Modules, d.Logger)
+
 	d.Modules = append(d.Modules, account)
 	d.Modules = append(d.Modules, billing)
 	d.Modules = append(d.Modules, databases)
 	d.Modules = append(d.Modules, droplets)
-	d.Modules = append(d.Modules, logger)
 	d.Modules = append(d.Modules, reservedIPs)
 	d.Modules = append(d.Modules, storage)
 

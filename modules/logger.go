@@ -35,6 +35,7 @@ func (l *Logger) GetPositionData() *pieces.PositionData {
 // Log prepends a log message to the Messages slice
 func (l *Logger) Log(msg string) {
 	l.Messages = append(l.Messages, msg)
+	l.Refresh()
 }
 
 // Refresh updates the view content with the latest data
