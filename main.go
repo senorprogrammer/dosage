@@ -27,12 +27,10 @@ func ll(msg string) {
 
 // refresh loops through all the modules and updates their contents
 func refresh(tviewApp *tview.Application) {
-	ll("refreshing...")
-
 	logger.Refresh()
 
 	for _, svc := range svcs {
-		svc.Refresh()
+		go func(s services.Service) { s.Refresh() }(svc)
 	}
 
 	tviewApp.Draw()

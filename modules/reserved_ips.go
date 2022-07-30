@@ -40,7 +40,13 @@ func (r *ReservedIPs) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (r *ReservedIPs) Refresh() {
+	if !r.Available {
+		return
+	}
+
+	r.SetAvailable(false)
 	r.GetView().SetText(r.data())
+	r.SetAvailable(true)
 }
 
 /* -------------------- Unexported Functions -------------------- */

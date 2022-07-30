@@ -84,8 +84,10 @@ func (d *DigitalOcean) LoadModules() {
 
 // Refresh tells each module to update its contents
 func (d *DigitalOcean) Refresh() {
+	d.Logger.Log("refreshing digitalocean")
+
 	for _, mod := range d.Modules {
-		mod.Refresh()
+		go func(m modules.Module) { m.Refresh() }(mod)
 	}
 }
 

@@ -40,7 +40,13 @@ func (v *Volumes) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (v *Volumes) Refresh() {
+	if !v.Available {
+		return
+	}
+
+	v.SetAvailable(false)
 	v.GetView().SetText(v.data())
+	v.SetAvailable(true)
 }
 
 /* -------------------- Unexported Functions -------------------- */

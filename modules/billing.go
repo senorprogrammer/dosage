@@ -40,7 +40,13 @@ func (b *Billing) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (b *Billing) Refresh() {
+	if !b.Available {
+		return
+	}
+
+	b.SetAvailable(false)
 	b.GetView().SetText(b.data())
+	b.SetAvailable(true)
 }
 
 /* -------------------- Unexported Functions -------------------- */

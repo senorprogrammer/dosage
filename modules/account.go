@@ -40,7 +40,13 @@ func (a *Account) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (a *Account) Refresh() {
+	if !a.Available {
+		return
+	}
+
+	a.SetAvailable(false)
 	a.GetView().SetText(a.data())
+	a.SetAvailable(true)
 }
 
 /* -------------------- Unexported Functions -------------------- */

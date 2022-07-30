@@ -6,9 +6,10 @@ import (
 
 // Base is base
 type Base struct {
-	Focus bool
-	Title string
-	View  *tview.TextView
+	Available bool // if a module is Available, it can be refreshed
+	Focus     bool
+	Title     string
+	View      *tview.TextView
 }
 
 // NewBase creates and returns an instance of Base
@@ -21,13 +22,19 @@ func NewBase(title string) Base {
 	view.SetDynamicColors(true)
 
 	return Base{
-		Focus: false,
-		Title: title,
-		View:  view,
+		Available: true,
+		Focus:     false,
+		Title:     title,
+		View:      view,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
+
+// GetAvailable returns whether or not this module is available for refreshing
+func (b *Base) GetAvailable() bool {
+	return b.Available
+}
 
 // GetFocus returns the focus val for display
 func (b *Base) GetFocus() bool {
@@ -42,4 +49,9 @@ func (b *Base) GetTitle() string {
 // GetView returns the tview.TextView used to display this module's data
 func (b *Base) GetView() *tview.TextView {
 	return b.View
+}
+
+// SetAvailable sets whether or not this module is available for refreshing
+func (b *Base) SetAvailable(isAvailable bool) {
+	b.Available = isAvailable
 }

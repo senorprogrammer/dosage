@@ -40,7 +40,13 @@ func (d *Droplets) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (d *Droplets) Refresh() {
+	if !d.Available {
+		return
+	}
+
+	d.SetAvailable(false)
 	d.GetView().SetText(d.data())
+	d.SetAvailable(true)
 }
 
 /* -------------------- Unexported Functions -------------------- */
