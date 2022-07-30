@@ -9,6 +9,7 @@ import (
 type Module interface {
 	GetFocus() bool
 	GetPositionData() *pieces.PositionData
+	GetTitle() string
 	GetView() *tview.TextView
 
 	Refresh()

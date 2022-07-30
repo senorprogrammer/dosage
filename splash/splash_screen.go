@@ -1,4 +1,4 @@
-package pieces
+package splash
 
 import (
 	"fmt"

@@ -4,11 +4,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
-	"github.com/senorprogrammer/dosage/pieces"
+	"github.com/senorprogrammer/dosage/services"
 	digitalocean "github.com/senorprogrammer/dosage/services/digitalocean"
+	"github.com/senorprogrammer/dosage/splash"
 
 	"github.com/rivo/tview"
 )
@@ -16,9 +16,8 @@ import (
 const appName = "dosage"
 
 var (
-	doClient *godo.Client
 	logger   *modules.Logger
-	mods     = []modules.Module{}
+	svcs     = []services.Service{}
 	tviewApp = tview.NewApplication()
 )
 
@@ -30,8 +29,8 @@ func ll(msg string) {
 func refresh(tviewApp *tview.Application) {
 	ll("refreshing...")
 
-	for _, mod := range mods {
-		mod.Refresh()
+	for _, svc := range svcs {
+		svc.Refresh()
 	}
 
 	tviewApp.Draw()
@@ -49,15 +48,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	pieces.DisplaySplashScreen()
+	splash.DisplaySplashScreen()
 
 	tviewPages := tview.NewPages()
-	digOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages)
 	tviewApp.SetRoot(tviewPages, true)
 
-	// Load the individual modules
 	logger = modules.NewLogger(" logger ")
-	mods = digOcean.LoadModules(logger)
+
+	// Load the services
+	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages)
+	digitalOcean.LoadModules(logger)
+	svcs = append(svcs, digitalOcean)
 
 	ll("starting app...")
 
@@ -70,10 +71,10 @@ func main() {
 
 		for {
 			select {
-			case <-digOcean.RefreshTicker.C:
+			case <-digitalOcean.RefreshTicker.C:
 				refreshFunc(tviewApp)
 			case <-quit:
-				digOcean.RefreshTicker.Stop()
+				digitalOcean.RefreshTicker.Stop()
 				return
 			}
 		}
