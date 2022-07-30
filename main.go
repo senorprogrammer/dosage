@@ -6,6 +6,7 @@ import (
 
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
+	"github.com/senorprogrammer/dosage/pieces"
 	"github.com/senorprogrammer/dosage/services"
 	digitalocean "github.com/senorprogrammer/dosage/services/digitalocean"
 	"github.com/senorprogrammer/dosage/splash"
@@ -16,24 +17,14 @@ import (
 const appName = "dosage"
 
 var (
-	logger   *modules.Logger
-	svcs     = []services.Service{}
-	tviewApp = tview.NewApplication()
+	logger    = modules.NewLogger(" logger ")
+	refresher *pieces.Refresher
+	svcs      = []services.Service{}
+	tviewApp  = tview.NewApplication()
 )
 
 func ll(msg string) {
 	logger.Log(msg)
-}
-
-// refresh loops through all the modules and updates their contents
-func refresh(tviewApp *tview.Application) {
-	logger.Refresh()
-
-	for _, svc := range svcs {
-		go func(s services.Service) { s.Refresh() }(svc)
-	}
-
-	tviewApp.Draw()
 }
 
 /* -------------------- Main -------------------- */
@@ -50,35 +41,21 @@ func main() {
 
 	splash.DisplaySplashScreen()
 
+	// Create the TView app that handles onscreen drawing
 	tviewPages := tview.NewPages()
 	tviewApp.SetRoot(tviewPages, true)
-
-	logger = modules.NewLogger(" logger ")
 
 	// Load the services
 	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages, logger)
 	digitalOcean.LoadModules()
 	svcs = append(svcs, digitalOcean)
 
+	// Create the refresher, which handles the refresh loop
+	refresher = pieces.NewRefresher(svcs, tviewApp)
+	defer close(refresher.QuitChan)
+	refresher.Run()
+
 	ll("starting app...")
-
-	// Start the go routine that updates the module content on a timer
-	quit := make(chan struct{})
-	defer close(quit)
-
-	go func(refreshFunc func(tviewApp *tview.Application), tviewApp *tview.Application) {
-		refreshFunc(tviewApp)
-
-		for {
-			select {
-			case <-digitalOcean.RefreshTicker.C:
-				refreshFunc(tviewApp)
-			case <-quit:
-				digitalOcean.RefreshTicker.Stop()
-				return
-			}
-		}
-	}(refresh, tviewApp)
 
 	// Run the underlying app loop
 	if err := tviewApp.Run(); err != nil {

@@ -2,15 +2,10 @@ package digitalocean
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
-)
-
-const (
-	refreshInterval = 5
 )
 
 // DigitalOcean is the container application that handles all things DigitalOcean
@@ -20,7 +15,6 @@ type DigitalOcean struct {
 	Logger        *modules.Logger
 	Modules       []modules.Module
 	Name          string
-	RefreshTicker *time.Ticker
 
 	Grid *tview.Grid
 }
@@ -36,7 +30,6 @@ func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Log
 		Logger:        logger,
 		Modules:       []modules.Module{},
 		Name:          "DigitalOcean",
-		RefreshTicker: time.NewTicker(refreshInterval * time.Second),
 		Grid:          grid,
 	}
 }
