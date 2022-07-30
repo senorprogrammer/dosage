@@ -1,4 +1,4 @@
-package modules
+package domodules
 
 import (
 	"github.com/rivo/tview"

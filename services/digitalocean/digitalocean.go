@@ -5,22 +5,22 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
-	"github.com/senorprogrammer/dosage/modules"
+	"github.com/senorprogrammer/dosage/services/digitalocean/domodules"
 )
 
 // DigitalOcean is the container application that handles all things DigitalOcean
 type DigitalOcean struct {
 	DOClient      *godo.Client
-	FocusedModule *modules.Module
-	Logger        *modules.Logger
-	Modules       []modules.Module
+	FocusedModule *domodules.Module
+	Logger        *domodules.Logger
+	Modules       []domodules.Module
 	Name          string
 
 	Grid *tview.Grid
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
-func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Logger) *DigitalOcean {
+func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *domodules.Logger) *DigitalOcean {
 	grid := newGrid(" DigitalOcean ")
 	tviewPages.AddPage("digitalocean", grid, true, true)
 
@@ -28,7 +28,7 @@ func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Log
 		DOClient:      godo.NewFromToken(apiKey),
 		FocusedModule: nil,
 		Logger:        logger,
-		Modules:       []modules.Module{},
+		Modules:       []domodules.Module{},
 		Name:          "DigitalOcean",
 		Grid:          grid,
 	}
@@ -45,12 +45,12 @@ func (d *DigitalOcean) GetName() string {
 // Pass the logger in because it's common across everything and needs to
 // be instantiated before the rest of the modules
 func (d *DigitalOcean) LoadModules() {
-	account := modules.NewAccount(" account ", d.DOClient)
-	billing := modules.NewBilling(" billing ", d.DOClient)
-	databases := modules.NewDatabases(" databases ", d.DOClient)
-	droplets := modules.NewDroplets(" droplets ", d.DOClient)
-	reservedIPs := modules.NewReservedIPs(" reserved ips ", d.DOClient)
-	storage := modules.NewVolumes(" volumes ", d.DOClient)
+	account := domodules.NewAccount(" account ", d.DOClient)
+	billing := domodules.NewBilling(" billing ", d.DOClient)
+	databases := domodules.NewDatabases(" databases ", d.DOClient)
+	droplets := domodules.NewDroplets(" droplets ", d.DOClient)
+	reservedIPs := domodules.NewReservedIPs(" reserved ips ", d.DOClient)
+	storage := domodules.NewVolumes(" volumes ", d.DOClient)
 
 	d.Modules = append(d.Modules, d.Logger)
 
@@ -80,7 +80,7 @@ func (d *DigitalOcean) Refresh() {
 	d.Logger.Log("refreshing digitalocean")
 
 	for _, mod := range d.Modules {
-		go func(m modules.Module) { m.Refresh() }(mod)
+		go func(m domodules.Module) { m.Refresh() }(mod)
 	}
 }
 
