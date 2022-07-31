@@ -63,7 +63,7 @@ func (b *Billing) data() string {
 	}
 
 	if len(billingHistory) == 0 {
-		return "none"
+		return modules.EmptyDataLabel
 	}
 
 	data := ""

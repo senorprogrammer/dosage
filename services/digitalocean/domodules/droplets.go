@@ -63,7 +63,7 @@ func (d *Droplets) data() string {
 	}
 
 	if len(droplets) == 0 {
-		return "none"
+		return modules.EmptyDataLabel
 	}
 
 	data := ""

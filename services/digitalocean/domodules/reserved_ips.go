@@ -63,7 +63,7 @@ func (r *ReservedIPs) data() string {
 	}
 
 	if len(reservedIPs) == 0 {
-		return "none"
+		return modules.EmptyDataLabel
 	}
 
 	data := ""

@@ -4,6 +4,10 @@ import (
 	"github.com/rivo/tview"
 )
 
+const (
+	EmptyDataLabel = "none"
+)
+
 // Base is base
 type Base struct {
 	Available bool // if a module is Available, it can be refreshed

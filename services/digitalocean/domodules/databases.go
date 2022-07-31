@@ -63,7 +63,7 @@ func (d *Databases) data() string {
 	}
 
 	if len(databases) == 0 {
-		return "none"
+		return modules.EmptyDataLabel
 	}
 
 	data := ""

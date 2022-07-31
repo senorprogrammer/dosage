@@ -48,6 +48,7 @@ func (d *DigitalOcean) GetName() string {
 func (d *DigitalOcean) LoadModules() {
 	account := domodules.NewAccount(" account ", d.DOClient)
 	billing := domodules.NewBilling(" billing ", d.DOClient)
+	certs := domodules.NewCertificates(" certs ", d.DOClient)
 	databases := domodules.NewDatabases(" databases ", d.DOClient)
 	droplets := domodules.NewDroplets(" droplets ", d.DOClient)
 	reservedIPs := domodules.NewReservedIPs(" reserved ips ", d.DOClient)
@@ -57,17 +58,19 @@ func (d *DigitalOcean) LoadModules() {
 
 	d.Modules = append(d.Modules, account)
 	d.Modules = append(d.Modules, billing)
+	d.Modules = append(d.Modules, certs)
 	d.Modules = append(d.Modules, databases)
 	d.Modules = append(d.Modules, droplets)
 	d.Modules = append(d.Modules, reservedIPs)
 	d.Modules = append(d.Modules, storage)
 
 	for _, mod := range d.Modules {
+		// Disabled modules do not get loaded
 		if !mod.GetEnabled() {
-			// Disabled modules do not get loaded
 			continue
 		}
 
+		// Enabled modules get add to the gridview
 		d.Grid.AddItem(
 			mod.GetView(),
 			mod.GetPositionData().GetRow(),

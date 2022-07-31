@@ -63,7 +63,7 @@ func (v *Volumes) data() string {
 	}
 
 	if len(volumes) == 0 {
-		return "none"
+		return modules.EmptyDataLabel
 	}
 
 	data := ""
