@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/senorprogrammer/dosage/flags"
+	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 	"github.com/senorprogrammer/dosage/services"
 	digitalocean "github.com/senorprogrammer/dosage/services/digitalocean"
-	"github.com/senorprogrammer/dosage/services/digitalocean/domodules"
 	"github.com/senorprogrammer/dosage/splash"
 
 	"github.com/rivo/tview"
@@ -17,7 +17,7 @@ import (
 const appName = "dosage"
 
 var (
-	logger    = domodules.NewLogger(" logger ")
+	logger    = modules.NewLogger(" logger ")
 	refresher *pieces.Refresher
 	svcs      = []services.Service{}
 	tviewApp  = tview.NewApplication()

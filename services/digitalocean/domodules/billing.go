@@ -5,12 +5,13 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
+	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
 
 // Billing is billing
 type Billing struct {
-	Base
+	modules.Base
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
@@ -18,7 +19,7 @@ type Billing struct {
 // NewBilling creates and returns an instance of Billing
 func NewBilling(title string, client *godo.Client) *Billing {
 	return &Billing{
-		Base: NewBase(title),
+		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       2,
 			Col:       7,

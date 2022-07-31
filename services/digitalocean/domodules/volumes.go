@@ -5,12 +5,13 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/godo"
+	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
 
 // Volumes is storage
 type Volumes struct {
-	Base
+	modules.Base
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
@@ -18,7 +19,7 @@ type Volumes struct {
 // NewVolumes creates and returns an instance of Storage
 func NewVolumes(title string, client *godo.Client) *Volumes {
 	return &Volumes{
-		Base: NewBase(title),
+		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
 			Col:       7,

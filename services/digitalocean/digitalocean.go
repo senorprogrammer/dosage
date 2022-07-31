@@ -5,22 +5,23 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/services/digitalocean/domodules"
 )
 
 // DigitalOcean is the container application that handles all things DigitalOcean
 type DigitalOcean struct {
 	DOClient      *godo.Client
-	FocusedModule *domodules.Module
-	Logger        *domodules.Logger
-	Modules       []domodules.Module
+	FocusedModule *modules.Module
+	Logger        *modules.Logger
+	Modules       []modules.Module
 	Name          string
 
 	Grid *tview.Grid
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
-func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *domodules.Logger) *DigitalOcean {
+func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Logger) *DigitalOcean {
 	grid := newGrid(" DigitalOcean ")
 	tviewPages.AddPage("digitalocean", grid, true, true)
 
@@ -28,7 +29,7 @@ func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *domodules.L
 		DOClient:      godo.NewFromToken(apiKey),
 		FocusedModule: nil,
 		Logger:        logger,
-		Modules:       []domodules.Module{},
+		Modules:       []modules.Module{},
 		Name:          "DigitalOcean",
 		Grid:          grid,
 	}
@@ -80,7 +81,7 @@ func (d *DigitalOcean) Refresh() {
 	d.Logger.Log("refreshing digitalocean")
 
 	for _, mod := range d.Modules {
-		go func(m domodules.Module) { m.Refresh() }(mod)
+		go func(m modules.Module) { m.Refresh() }(mod)
 	}
 }
 

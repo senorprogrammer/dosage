@@ -1,4 +1,4 @@
-package domodules
+package modules
 
 import (
 	"testing"

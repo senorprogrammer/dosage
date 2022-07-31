@@ -1,4 +1,4 @@
-package domodules
+package modules
 
 import "github.com/senorprogrammer/dosage/pieces"
 
