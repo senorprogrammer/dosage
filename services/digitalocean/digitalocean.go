@@ -63,6 +63,11 @@ func (d *DigitalOcean) LoadModules() {
 	d.Modules = append(d.Modules, storage)
 
 	for _, mod := range d.Modules {
+		if !mod.GetEnabled() {
+			// Disabled modules do not get loaded
+			continue
+		}
+
 		d.Grid.AddItem(
 			mod.GetView(),
 			mod.GetPositionData().GetRow(),

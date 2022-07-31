@@ -18,7 +18,7 @@ type Droplets struct {
 
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, client *godo.Client) *Droplets {
-	return &Droplets{
+	mod := &Droplets{
 		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
@@ -30,6 +30,10 @@ func NewDroplets(title string, client *godo.Client) *Droplets {
 		},
 		doClient: client,
 	}
+
+	mod.Enabled = true
+
+	return mod
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -41,7 +45,7 @@ func (d *Droplets) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (d *Droplets) Refresh() {
-	if !d.Available {
+	if !d.GetAvailable() || !d.GetEnabled() {
 		return
 	}
 

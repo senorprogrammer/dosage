@@ -18,7 +18,7 @@ type Databases struct {
 
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, client *godo.Client) *Databases {
-	return &Databases{
+	mod := &Databases{
 		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       4,
@@ -30,6 +30,10 @@ func NewDatabases(title string, client *godo.Client) *Databases {
 		},
 		doClient: client,
 	}
+
+	mod.Enabled = true
+
+	return mod
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -41,7 +45,7 @@ func (d *Databases) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (d *Databases) Refresh() {
-	if !d.Available {
+	if !d.GetAvailable() || !d.GetEnabled() {
 		return
 	}
 

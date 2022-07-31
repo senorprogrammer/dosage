@@ -8,6 +8,7 @@ import (
 // Module defines the interface that all modules must adhere to
 type Module interface {
 	GetAvailable() bool
+	GetEnabled() bool
 	GetFocus() bool
 	GetPositionData() *pieces.PositionData
 	GetTitle() string

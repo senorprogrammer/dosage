@@ -18,7 +18,7 @@ type Account struct {
 
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, client *godo.Client) *Account {
-	return &Account{
+	mod := &Account{
 		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
@@ -30,6 +30,10 @@ func NewAccount(title string, client *godo.Client) *Account {
 		},
 		doClient: client,
 	}
+
+	mod.Enabled = true
+
+	return mod
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -41,7 +45,7 @@ func (a *Account) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (a *Account) Refresh() {
-	if !a.Available {
+	if !a.GetAvailable() || !a.GetEnabled() {
 		return
 	}
 

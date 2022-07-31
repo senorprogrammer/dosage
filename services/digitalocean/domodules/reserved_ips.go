@@ -18,7 +18,7 @@ type ReservedIPs struct {
 
 // NewReservedIPs creates and returns an instance of Droplets
 func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
-	return &ReservedIPs{
+	mod := &ReservedIPs{
 		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       2,
@@ -30,6 +30,10 @@ func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 		},
 		doClient: client,
 	}
+
+	mod.Enabled = true
+
+	return mod
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -41,7 +45,7 @@ func (r *ReservedIPs) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (r *ReservedIPs) Refresh() {
-	if !r.Available {
+	if !r.GetAvailable() || !r.GetEnabled() {
 		return
 	}
 

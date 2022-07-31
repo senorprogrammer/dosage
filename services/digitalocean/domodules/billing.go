@@ -18,7 +18,7 @@ type Billing struct {
 
 // NewBilling creates and returns an instance of Billing
 func NewBilling(title string, client *godo.Client) *Billing {
-	return &Billing{
+	mod := &Billing{
 		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       2,
@@ -30,6 +30,10 @@ func NewBilling(title string, client *godo.Client) *Billing {
 		},
 		doClient: client,
 	}
+
+	mod.Enabled = true
+
+	return mod
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -41,7 +45,7 @@ func (b *Billing) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (b *Billing) Refresh() {
-	if !b.Available {
+	if !b.GetAvailable() || !b.GetEnabled() {
 		return
 	}
 

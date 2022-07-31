@@ -18,7 +18,7 @@ type Volumes struct {
 
 // NewVolumes creates and returns an instance of Storage
 func NewVolumes(title string, client *godo.Client) *Volumes {
-	return &Volumes{
+	mod := &Volumes{
 		Base: modules.NewBase(title),
 		PositionData: pieces.PositionData{
 			Row:       0,
@@ -30,6 +30,10 @@ func NewVolumes(title string, client *godo.Client) *Volumes {
 		},
 		doClient: client,
 	}
+
+	mod.Enabled = true
+
+	return mod
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -41,7 +45,7 @@ func (v *Volumes) GetPositionData() *pieces.PositionData {
 
 // Refresh updates the view content with the latest data
 func (v *Volumes) Refresh() {
-	if !v.Available {
+	if !v.GetAvailable() || !v.GetEnabled() {
 		return
 	}
 

@@ -7,6 +7,7 @@ import (
 // Base is base
 type Base struct {
 	Available bool // if a module is Available, it can be refreshed
+	Enabled   bool
 	Focus     bool
 	Title     string
 	View      *tview.TextView
@@ -23,6 +24,7 @@ func NewBase(title string) Base {
 
 	return Base{
 		Available: true,
+		Enabled:   false,
 		Focus:     false,
 		Title:     title,
 		View:      view,
@@ -34,6 +36,11 @@ func NewBase(title string) Base {
 // GetAvailable returns whether or not this module is available for refreshing
 func (b *Base) GetAvailable() bool {
 	return b.Available
+}
+
+// GetEnabled returns whether or not a module is enabled
+func (b *Base) GetEnabled() bool {
+	return b.Enabled
 }
 
 // GetFocus returns the focus val for display
