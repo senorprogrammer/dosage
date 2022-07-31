@@ -4,11 +4,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/senorprogrammer/dosage/core"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
-	"github.com/senorprogrammer/dosage/pieces"
-	"github.com/senorprogrammer/dosage/services"
-	digitalocean "github.com/senorprogrammer/dosage/services/digitalocean"
 	"github.com/senorprogrammer/dosage/splash"
 
 	"github.com/rivo/tview"
@@ -18,8 +16,8 @@ const appName = "dosage"
 
 var (
 	logger    = modules.NewLogger(" logger ")
-	refresher *pieces.Refresher
-	svcs      = []services.Service{}
+	refresher *core.Refresher
+	servicer  *core.Servicer
 	tviewApp  = tview.NewApplication()
 )
 
@@ -45,13 +43,12 @@ func main() {
 	tviewPages := tview.NewPages()
 	tviewApp.SetRoot(tviewPages, true)
 
-	// Load the services
-	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages, logger)
-	digitalOcean.LoadModules()
-	svcs = append(svcs, digitalOcean)
+	// Create the Servicer, which manages loading of services
+	servicer = core.NewServicer()
+	servicer.LoadServices(flags, tviewPages, logger)
 
 	// Create the refresher, which handles the refresh loop
-	refresher = pieces.NewRefresher(svcs, tviewApp)
+	refresher = core.NewRefresher(servicer.GetServices(), tviewApp)
 	defer close(refresher.QuitChan)
 	refresher.Run()
 
