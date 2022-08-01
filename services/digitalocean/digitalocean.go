@@ -6,16 +6,18 @@ import (
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
+	"github.com/senorprogrammer/dosage/services"
 	"github.com/senorprogrammer/dosage/services/digitalocean/domodules"
 )
 
 // DigitalOcean is the container application that handles all things DigitalOcean
 type DigitalOcean struct {
+	services.Base
+
 	DOClient      *godo.Client
 	FocusedModule *modules.Module
 	Logger        *modules.Logger
 	Modules       []modules.Module
-	Name          string
 
 	Grid *tview.Grid
 }
@@ -26,21 +28,16 @@ func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Log
 	tviewPages.AddPage("digitalocean", grid, true, true)
 
 	return &DigitalOcean{
+		Base:          services.Base{Name: "digitalocean"},
 		DOClient:      godo.NewFromToken(apiKey),
 		FocusedModule: nil,
 		Logger:        logger,
 		Modules:       []modules.Module{},
-		Name:          "DigitalOcean",
 		Grid:          grid,
 	}
 }
 
 /* -------------------- Exported Functions -------------------- */
-
-// GetName returns the name of the service
-func (d *DigitalOcean) GetName() string {
-	return d.Name
-}
 
 // LoadModules instantiates each module and attaches it to the TView app
 // Pass the logger in because it's common across everything and needs to

@@ -29,9 +29,9 @@ func NewBase(title string) Base {
 	view.SetDynamicColors(true)
 
 	return Base{
-		Available: true,
-		Enabled:   false,
-		Focus:     false,
+		Available: true,  // Modules are available unless they're fetching data
+		Enabled:   false, // Modules are disabled by default, enabled explicitly
+		Focus:     false, // Modules are unfoused by default, receiving focus explicitly
 		Title:     title,
 		View:      view,
 	}
