@@ -12,28 +12,28 @@ import (
 // Volumes is storage
 type Volumes struct {
 	modules.Base
-	PositionData pieces.PositionData
-	Volumes      []godo.Volume
-	doClient     *godo.Client
+	Volumes  []godo.Volume
+	doClient *godo.Client
 }
 
 // NewVolumes creates and returns an instance of Storage
 func NewVolumes(title string, client *godo.Client) *Volumes {
 	mod := &Volumes{
-		Base: modules.NewBase(title),
-		PositionData: pieces.PositionData{
-			Row:       0,
-			Col:       7,
-			RowSpan:   2,
-			ColSpan:   4,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
+		Base:     modules.NewBase(title),
 		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       0,
+		Col:       7,
+		RowSpan:   2,
+		ColSpan:   4,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

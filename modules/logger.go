@@ -12,19 +12,20 @@ type Logger struct {
 // NewLogger creates and returns an instance of Logger
 func NewLogger(title string) *Logger {
 	mod := &Logger{
-		Base: NewBase(title),
-		PositionData: pieces.PositionData{
-			Row:       2,
-			Col:       0,
-			RowSpan:   8,
-			ColSpan:   2,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
+		Base:     NewBase(title),
 		Messages: []string{},
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       2,
+		Col:       0,
+		RowSpan:   8,
+		ColSpan:   2,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

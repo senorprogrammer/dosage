@@ -13,7 +13,6 @@ import (
 type Certificates struct {
 	modules.Base
 	Certificates []godo.Certificate
-	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
 
@@ -22,18 +21,19 @@ func NewCertificates(title string, client *godo.Client) *Certificates {
 	mod := &Certificates{
 		Base:         modules.NewBase(title),
 		Certificates: []godo.Certificate{},
-		PositionData: pieces.PositionData{
-			Row:       0,
-			Col:       11,
-			RowSpan:   2,
-			ColSpan:   4,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
-		doClient: client,
+		doClient:     client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       0,
+		Col:       11,
+		RowSpan:   2,
+		ColSpan:   4,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

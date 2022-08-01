@@ -12,9 +12,8 @@ import (
 // Databases is database
 type Databases struct {
 	modules.Base
-	Databases    []godo.Database
-	PositionData pieces.PositionData
-	doClient     *godo.Client
+	Databases []godo.Database
+	doClient  *godo.Client
 }
 
 // NewDatabases creates and returns an instance of Databases
@@ -22,18 +21,19 @@ func NewDatabases(title string, client *godo.Client) *Databases {
 	mod := &Databases{
 		Base:      modules.NewBase(title),
 		Databases: []godo.Database{},
-		PositionData: pieces.PositionData{
-			Row:       4,
-			Col:       2,
-			RowSpan:   2,
-			ColSpan:   9,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
-		doClient: client,
+		doClient:  client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       4,
+		Col:       2,
+		RowSpan:   2,
+		ColSpan:   9,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

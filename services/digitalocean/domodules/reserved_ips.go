@@ -12,28 +12,28 @@ import (
 // ReservedIPs displays a list of all your reserved IPs and which droplet they're attached to
 type ReservedIPs struct {
 	modules.Base
-	PositionData pieces.PositionData
-	ReservedIPs  []godo.ReservedIP
-	doClient     *godo.Client
+	ReservedIPs []godo.ReservedIP
+	doClient    *godo.Client
 }
 
 // NewReservedIPs creates and returns an instance of Droplets
 func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 	mod := &ReservedIPs{
-		Base: modules.NewBase(title),
-		PositionData: pieces.PositionData{
-			Row:       2,
-			Col:       2,
-			RowSpan:   2,
-			ColSpan:   5,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
+		Base:        modules.NewBase(title),
 		ReservedIPs: []godo.ReservedIP{},
 		doClient:    client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       2,
+		Col:       2,
+		RowSpan:   2,
+		ColSpan:   5,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }
