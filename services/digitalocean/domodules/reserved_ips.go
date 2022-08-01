@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -17,9 +18,9 @@ type ReservedIPs struct {
 }
 
 // NewReservedIPs creates and returns an instance of Droplets
-func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
+func NewReservedIPs(title string, client *godo.Client, logger *modules.Logger) *ReservedIPs {
 	mod := &ReservedIPs{
-		Base:        modules.NewBase(title),
+		Base:        modules.NewBase(title, 5*time.Second, logger),
 		ReservedIPs: []godo.ReservedIP{},
 		doClient:    client,
 	}
@@ -34,6 +35,8 @@ func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -51,6 +54,8 @@ func (r *ReservedIPs) Refresh() {
 		return
 	}
 
+	r.Logger.Log(fmt.Sprintf("refreshing %s", r.GetTitle()))
+
 	r.SetAvailable(false)
 
 	rip, err := r.fetch()
@@ -62,6 +67,8 @@ func (r *ReservedIPs) Refresh() {
 	}
 
 	r.SetAvailable(true)
+
+	r.Render()
 }
 
 // Render draws the current string representation into the view

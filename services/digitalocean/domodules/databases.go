@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -17,9 +18,9 @@ type Databases struct {
 }
 
 // NewDatabases creates and returns an instance of Databases
-func NewDatabases(title string, client *godo.Client) *Databases {
+func NewDatabases(title string, client *godo.Client, logger *modules.Logger) *Databases {
 	mod := &Databases{
-		Base:      modules.NewBase(title),
+		Base:      modules.NewBase(title, 5*time.Second, logger),
 		Databases: []godo.Database{},
 		doClient:  client,
 	}
@@ -34,6 +35,8 @@ func NewDatabases(title string, client *godo.Client) *Databases {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -51,6 +54,8 @@ func (d *Databases) Refresh() {
 		return
 	}
 
+	d.Logger.Log(fmt.Sprintf("refreshing %s", d.GetTitle()))
+
 	d.SetAvailable(false)
 
 	databases, err := d.fetch()
@@ -62,6 +67,8 @@ func (d *Databases) Refresh() {
 	}
 
 	d.SetAvailable(true)
+
+	d.Render()
 }
 
 // Render draws the current string representation into the view

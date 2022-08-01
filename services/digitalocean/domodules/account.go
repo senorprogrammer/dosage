@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -17,10 +18,10 @@ type Account struct {
 }
 
 // NewAccount creates and returns an instance of Account
-func NewAccount(title string, client *godo.Client) *Account {
+func NewAccount(title string, client *godo.Client, logger *modules.Logger) *Account {
 	mod := &Account{
-		Base:        modules.NewBase(title),
-		AccountInfo: &godo.Account{},
+		Base:        modules.NewBase(title, 15*time.Second, logger),
+		AccountInfo: nil,
 		doClient:    client,
 	}
 
@@ -34,6 +35,8 @@ func NewAccount(title string, client *godo.Client) *Account {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -51,6 +54,8 @@ func (a *Account) Refresh() {
 		return
 	}
 
+	a.Logger.Log(fmt.Sprintf("refreshing %s", a.GetTitle()))
+
 	a.SetAvailable(false)
 
 	accountInfo, err := a.fetch()
@@ -62,6 +67,8 @@ func (a *Account) Refresh() {
 	}
 
 	a.SetAvailable(true)
+
+	a.Render()
 }
 
 // Render draws the current string representation into the view

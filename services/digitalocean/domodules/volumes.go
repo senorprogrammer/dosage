@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -17,9 +18,9 @@ type Volumes struct {
 }
 
 // NewVolumes creates and returns an instance of Storage
-func NewVolumes(title string, client *godo.Client) *Volumes {
+func NewVolumes(title string, client *godo.Client, logger *modules.Logger) *Volumes {
 	mod := &Volumes{
-		Base:     modules.NewBase(title),
+		Base:     modules.NewBase(title, 5*time.Second, logger),
 		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
@@ -34,6 +35,8 @@ func NewVolumes(title string, client *godo.Client) *Volumes {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -51,6 +54,8 @@ func (v *Volumes) Refresh() {
 		return
 	}
 
+	v.Logger.Log(fmt.Sprintf("refreshing %s", v.GetTitle()))
+
 	v.SetAvailable(false)
 
 	vols, err := v.fetch()
@@ -62,6 +67,8 @@ func (v *Volumes) Refresh() {
 	}
 
 	v.SetAvailable(true)
+
+	v.Render()
 }
 
 // Render draws the current string representation into the view
