@@ -18,9 +18,9 @@ type Databases struct {
 }
 
 // NewDatabases creates and returns an instance of Databases
-func NewDatabases(title string, client *godo.Client, logger *modules.Logger) *Databases {
+func NewDatabases(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Databases {
 	mod := &Databases{
-		Base:      modules.NewBase(title, 5*time.Second, logger),
+		Base:      modules.NewBase(title, refreshChan, 5*time.Second, logger),
 		Databases: []godo.Database{},
 		doClient:  client,
 	}
@@ -69,6 +69,9 @@ func (d *Databases) Refresh() {
 	d.SetAvailable(true)
 
 	d.Render()
+
+	// Tell the Refresher that there's new data to display
+	d.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view

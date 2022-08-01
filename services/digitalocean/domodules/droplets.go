@@ -18,9 +18,9 @@ type Droplets struct {
 }
 
 // NewDroplets creates and returns an instance of Droplets
-func NewDroplets(title string, client *godo.Client, logger *modules.Logger) *Droplets {
+func NewDroplets(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Droplets {
 	mod := &Droplets{
-		Base:     modules.NewBase(title, 5*time.Second, logger),
+		Base:     modules.NewBase(title, refreshChan, 5*time.Second, logger),
 		Droplets: []godo.Droplet{},
 		doClient: client,
 	}
@@ -69,6 +69,9 @@ func (d *Droplets) Refresh() {
 	d.SetAvailable(true)
 
 	d.Render()
+
+	// Tell the Refresher that there's new data to display
+	d.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view

@@ -15,7 +15,7 @@ import (
 const appName = "dosage"
 
 var (
-	logger    = modules.NewLogger(" logger ")
+	logger    *modules.Logger
 	refresher *core.Refresher
 	servicer  *core.Servicer
 	tviewApp  = tview.NewApplication()
@@ -43,14 +43,16 @@ func main() {
 	tviewPages := tview.NewPages()
 	tviewApp.SetRoot(tviewPages, true)
 
-	// Create the Servicer, which manages loading of services
-	servicer = core.NewServicer()
-	servicer.LoadServices(flags, tviewPages, logger)
-
 	// Create the refresher, which handles the refresh loop
 	refresher = core.NewRefresher(tviewApp)
-	defer close(refresher.QuitChan)
+	defer close(refresher.RefreshChan)
 	refresher.Run()
+
+	logger = modules.NewLogger(" logger ", refresher.RefreshChan)
+
+	// Create the Servicer, which manages loading of services
+	servicer = core.NewServicer()
+	servicer.LoadServices(flags, tviewPages, refresher.RefreshChan, logger)
 
 	ll("starting app...")
 

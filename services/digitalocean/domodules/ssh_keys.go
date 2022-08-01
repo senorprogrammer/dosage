@@ -18,9 +18,9 @@ type SSHKeys struct {
 }
 
 // NewSSHKeys creates and returns an instance of SSHKeys
-func NewSSHKeys(title string, client *godo.Client, logger *modules.Logger) *SSHKeys {
+func NewSSHKeys(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *SSHKeys {
 	mod := &SSHKeys{
-		Base:     modules.NewBase(title, 5*time.Second, logger),
+		Base:     modules.NewBase(title, refreshChan, 5*time.Second, logger),
 		SSHKeys:  []godo.Key{},
 		doClient: client,
 	}
@@ -69,6 +69,9 @@ func (s *SSHKeys) Refresh() {
 	s.SetAvailable(true)
 
 	s.Render()
+
+	// Tell the Refresher that there's new data to display
+	s.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view

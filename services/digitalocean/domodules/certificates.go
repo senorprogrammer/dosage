@@ -18,9 +18,9 @@ type Certificates struct {
 }
 
 // NewCertificates creates and returns an instance of Certificates
-func NewCertificates(title string, client *godo.Client, logger *modules.Logger) *Certificates {
+func NewCertificates(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Certificates {
 	mod := &Certificates{
-		Base:         modules.NewBase(title, 5*time.Second, logger),
+		Base:         modules.NewBase(title, refreshChan, 5*time.Second, logger),
 		Certificates: []godo.Certificate{},
 		doClient:     client,
 	}
@@ -69,6 +69,9 @@ func (c *Certificates) Refresh() {
 	c.SetAvailable(true)
 
 	c.Render()
+
+	// Tell the Refresher that there's new data to display
+	c.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view
