@@ -52,9 +52,5 @@ func (r *Refresher) Run() {
 
 // refresh loops through all the modules and updates their contents
 func (r *Refresher) refresh() {
-	// for _, svc := range r.Services {
-	// 	go func(s services.Service) { s.Refresh() }(svc)
-	// }
-
 	r.TViewApp.Draw()
 }

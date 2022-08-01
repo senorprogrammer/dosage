@@ -16,7 +16,7 @@ type Logger struct {
 // NewLogger creates and returns an instance of Logger
 func NewLogger(title string) *Logger {
 	mod := &Logger{
-		Base:     NewBase(title, 1*time.Second),
+		Base:     NewBase(title, 1*time.Second, nil),
 		Messages: []string{},
 	}
 

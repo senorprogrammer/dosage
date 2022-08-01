@@ -18,9 +18,9 @@ type SSHKeys struct {
 }
 
 // NewSSHKeys creates and returns an instance of SSHKeys
-func NewSSHKeys(title string, client *godo.Client) *SSHKeys {
+func NewSSHKeys(title string, client *godo.Client, logger *modules.Logger) *SSHKeys {
 	mod := &SSHKeys{
-		Base:     modules.NewBase(title, 5*time.Second),
+		Base:     modules.NewBase(title, 5*time.Second, logger),
 		SSHKeys:  []godo.Key{},
 		doClient: client,
 	}
@@ -53,6 +53,8 @@ func (s *SSHKeys) Refresh() {
 	if !s.GetAvailable() || !s.GetEnabled() {
 		return
 	}
+
+	s.Logger.Log(fmt.Sprintf("refreshing %s", s.GetTitle()))
 
 	s.SetAvailable(false)
 

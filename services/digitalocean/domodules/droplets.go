@@ -18,9 +18,9 @@ type Droplets struct {
 }
 
 // NewDroplets creates and returns an instance of Droplets
-func NewDroplets(title string, client *godo.Client) *Droplets {
+func NewDroplets(title string, client *godo.Client, logger *modules.Logger) *Droplets {
 	mod := &Droplets{
-		Base:     modules.NewBase(title, 5*time.Second),
+		Base:     modules.NewBase(title, 5*time.Second, logger),
 		Droplets: []godo.Droplet{},
 		doClient: client,
 	}
@@ -53,6 +53,8 @@ func (d *Droplets) Refresh() {
 	if !d.GetAvailable() || !d.GetEnabled() {
 		return
 	}
+
+	d.Logger.Log(fmt.Sprintf("refreshing %s", d.GetTitle()))
 
 	d.SetAvailable(false)
 

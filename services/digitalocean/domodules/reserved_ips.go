@@ -18,9 +18,9 @@ type ReservedIPs struct {
 }
 
 // NewReservedIPs creates and returns an instance of Droplets
-func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
+func NewReservedIPs(title string, client *godo.Client, logger *modules.Logger) *ReservedIPs {
 	mod := &ReservedIPs{
-		Base:        modules.NewBase(title, 5*time.Second),
+		Base:        modules.NewBase(title, 5*time.Second, logger),
 		ReservedIPs: []godo.ReservedIP{},
 		doClient:    client,
 	}
@@ -53,6 +53,8 @@ func (r *ReservedIPs) Refresh() {
 	if !r.GetAvailable() || !r.GetEnabled() {
 		return
 	}
+
+	r.Logger.Log(fmt.Sprintf("refreshing %s", r.GetTitle()))
 
 	r.SetAvailable(false)
 

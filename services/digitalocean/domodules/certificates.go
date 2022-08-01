@@ -18,9 +18,9 @@ type Certificates struct {
 }
 
 // NewCertificates creates and returns an instance of Certificates
-func NewCertificates(title string, client *godo.Client) *Certificates {
+func NewCertificates(title string, client *godo.Client, logger *modules.Logger) *Certificates {
 	mod := &Certificates{
-		Base:         modules.NewBase(title, 5*time.Second),
+		Base:         modules.NewBase(title, 5*time.Second, logger),
 		Certificates: []godo.Certificate{},
 		doClient:     client,
 	}
@@ -53,6 +53,8 @@ func (c *Certificates) Refresh() {
 	if !c.GetAvailable() || !c.GetEnabled() {
 		return
 	}
+
+	c.Logger.Log(fmt.Sprintf("refreshing %s", c.GetTitle()))
 
 	c.SetAvailable(false)
 

@@ -18,9 +18,9 @@ type Databases struct {
 }
 
 // NewDatabases creates and returns an instance of Databases
-func NewDatabases(title string, client *godo.Client) *Databases {
+func NewDatabases(title string, client *godo.Client, logger *modules.Logger) *Databases {
 	mod := &Databases{
-		Base:      modules.NewBase(title, 5*time.Second),
+		Base:      modules.NewBase(title, 5*time.Second, logger),
 		Databases: []godo.Database{},
 		doClient:  client,
 	}
@@ -53,6 +53,8 @@ func (d *Databases) Refresh() {
 	if !d.GetAvailable() || !d.GetEnabled() {
 		return
 	}
+
+	d.Logger.Log(fmt.Sprintf("refreshing %s", d.GetTitle()))
 
 	d.SetAvailable(false)
 

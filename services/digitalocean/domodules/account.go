@@ -18,9 +18,9 @@ type Account struct {
 }
 
 // NewAccount creates and returns an instance of Account
-func NewAccount(title string, client *godo.Client) *Account {
+func NewAccount(title string, client *godo.Client, logger *modules.Logger) *Account {
 	mod := &Account{
-		Base:        modules.NewBase(title, 15*time.Second),
+		Base:        modules.NewBase(title, 15*time.Second, logger),
 		AccountInfo: nil,
 		doClient:    client,
 	}
@@ -53,6 +53,8 @@ func (a *Account) Refresh() {
 	if !a.GetAvailable() || !a.GetEnabled() {
 		return
 	}
+
+	a.Logger.Log(fmt.Sprintf("refreshing %s", a.GetTitle()))
 
 	a.SetAvailable(false)
 

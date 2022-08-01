@@ -43,14 +43,14 @@ func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Log
 // Pass the logger in because it's common across everything and needs to
 // be instantiated before the rest of the modules
 func (d *DigitalOcean) LoadModules() {
-	account := domodules.NewAccount(" account ", d.DOClient)
-	billing := domodules.NewBilling(" billing ", d.DOClient)
-	certs := domodules.NewCertificates(" certs ", d.DOClient)
-	databases := domodules.NewDatabases(" databases ", d.DOClient)
-	droplets := domodules.NewDroplets(" droplets ", d.DOClient)
-	reservedIPs := domodules.NewReservedIPs(" reserved ips ", d.DOClient)
-	sshKeys := domodules.NewSSHKeys(" ssh keys ", d.DOClient)
-	storage := domodules.NewVolumes(" volumes ", d.DOClient)
+	account := domodules.NewAccount(" account ", d.DOClient, d.Logger)
+	billing := domodules.NewBilling(" billing ", d.DOClient, d.Logger)
+	certs := domodules.NewCertificates(" certs ", d.DOClient, d.Logger)
+	databases := domodules.NewDatabases(" databases ", d.DOClient, d.Logger)
+	droplets := domodules.NewDroplets(" droplets ", d.DOClient, d.Logger)
+	reservedIPs := domodules.NewReservedIPs(" reserved ips ", d.DOClient, d.Logger)
+	sshKeys := domodules.NewSSHKeys(" ssh keys ", d.DOClient, d.Logger)
+	storage := domodules.NewVolumes(" volumes ", d.DOClient, d.Logger)
 
 	d.Modules = append(d.Modules, d.Logger)
 

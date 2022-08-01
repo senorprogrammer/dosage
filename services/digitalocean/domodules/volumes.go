@@ -18,9 +18,9 @@ type Volumes struct {
 }
 
 // NewVolumes creates and returns an instance of Storage
-func NewVolumes(title string, client *godo.Client) *Volumes {
+func NewVolumes(title string, client *godo.Client, logger *modules.Logger) *Volumes {
 	mod := &Volumes{
-		Base:     modules.NewBase(title, 5*time.Second),
+		Base:     modules.NewBase(title, 5*time.Second, logger),
 		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
@@ -53,6 +53,8 @@ func (v *Volumes) Refresh() {
 	if !v.GetAvailable() || !v.GetEnabled() {
 		return
 	}
+
+	v.Logger.Log(fmt.Sprintf("refreshing %s", v.GetTitle()))
 
 	v.SetAvailable(false)
 

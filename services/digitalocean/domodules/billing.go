@@ -18,9 +18,9 @@ type Billing struct {
 }
 
 // NewBilling creates and returns an instance of Billing
-func NewBilling(title string, client *godo.Client) *Billing {
+func NewBilling(title string, client *godo.Client, logger *modules.Logger) *Billing {
 	mod := &Billing{
-		Base:           modules.NewBase(title, 5*time.Second),
+		Base:           modules.NewBase(title, 5*time.Second, logger),
 		BillingHistory: []godo.BillingHistoryEntry{},
 		doClient:       client,
 	}
@@ -53,6 +53,8 @@ func (b *Billing) Refresh() {
 	if !b.GetAvailable() || !b.GetEnabled() {
 		return
 	}
+
+	b.Logger.Log(fmt.Sprintf("refreshing %s", b.GetTitle()))
 
 	b.SetAvailable(false)
 

@@ -12,16 +12,13 @@ const (
 	EmptyContentLabel = "none"
 )
 
-// const (
-// 	refreshInterval = 5
-// )
-
 // Base is base
 type Base struct {
 	Available       bool // If a module is Available, it can be refreshed
-	Enabled         bool
+	Enabled         bool // If a module is Enabled, it can be refreshed
 	Focus           bool
 	LastError       error
+	Logger          *Logger
 	PositionData    pieces.PositionData
 	QuitChan        chan struct{}
 	RefreshFunc     func()
@@ -32,7 +29,7 @@ type Base struct {
 }
 
 // NewBase creates and returns an instance of Base
-func NewBase(title string, refreshInterval time.Duration) Base {
+func NewBase(title string, refreshInterval time.Duration, logger *Logger) Base {
 	view := tview.NewTextView()
 	view.SetBorder(true)
 	view.SetScrollable(true)
@@ -45,6 +42,7 @@ func NewBase(title string, refreshInterval time.Duration) Base {
 		Available:       true,  // Modules are available unless they're fetching data
 		Enabled:         false, // Modules are disabled by default, enabled explicitly
 		Focus:           false, // Modules are unfoused by default, receiving focus explicitly
+		Logger:          logger,
 		QuitChan:        make(chan struct{}),
 		RefreshFunc:     nil,
 		RefreshInterval: refreshInterval,
