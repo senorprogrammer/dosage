@@ -1,7 +1,7 @@
 package services
 
-// Service defines the interface for external services
-type Service interface {
+// Serviceable defines the interface for external services
+type Serviceable interface {
 	GetName() ServiceName
 	LoadModules()
 }
