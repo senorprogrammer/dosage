@@ -27,6 +27,7 @@ func NewBase(title string) Base {
 	view.SetTitle(title)
 	view.SetWrap(false)
 	view.SetDynamicColors(true)
+	view.SetBorderPadding(0, 0, 1, 1)
 
 	return Base{
 		Available: true,  // Modules are available unless they're fetching data

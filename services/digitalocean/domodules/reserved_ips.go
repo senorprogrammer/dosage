@@ -82,15 +82,14 @@ func (r *ReservedIPs) ToStr() string {
 
 	str := ""
 
-	for idx, reservedIP := range r.ReservedIPs {
+	for _, reservedIP := range r.ReservedIPs {
 		dropletID := 0
 		if reservedIP.Droplet != nil {
 			dropletID = reservedIP.Droplet.ID
 		}
 
 		str = str + fmt.Sprintf(
-			"%3d\t%10d\t%16s\t%s\n",
-			(idx+1),
+			"%10d\t%16s\t%s\n",
 			dropletID,
 			reservedIP.IP,
 			reservedIP.Region.Slug,

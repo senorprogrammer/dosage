@@ -82,7 +82,7 @@ func (a *Account) ToStr() string {
 	}
 
 	str := ""
-	str += fmt.Sprintf("Status: %s %s\n", a.AccountInfo.Status, a.AccountInfo.StatusMessage)
+	str += fmt.Sprintf("Status: %s %s\n", pieces.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status), a.AccountInfo.StatusMessage)
 	str += fmt.Sprintf("Team: %s\n", a.AccountInfo.Team.Name)
 	str += "\n"
 	str += fmt.Sprintf("[green:]%s[white:]\n", "Limits")

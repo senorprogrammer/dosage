@@ -49,6 +49,7 @@ func (d *DigitalOcean) LoadModules() {
 	databases := domodules.NewDatabases(" databases ", d.DOClient)
 	droplets := domodules.NewDroplets(" droplets ", d.DOClient)
 	reservedIPs := domodules.NewReservedIPs(" reserved ips ", d.DOClient)
+	sshKeys := domodules.NewSSHKeys(" ssh keys ", d.DOClient)
 	storage := domodules.NewVolumes(" volumes ", d.DOClient)
 
 	d.Modules = append(d.Modules, d.Logger)
@@ -59,6 +60,7 @@ func (d *DigitalOcean) LoadModules() {
 	d.Modules = append(d.Modules, databases)
 	d.Modules = append(d.Modules, droplets)
 	d.Modules = append(d.Modules, reservedIPs)
+	d.Modules = append(d.Modules, sshKeys)
 	d.Modules = append(d.Modules, storage)
 
 	for _, mod := range d.Modules {
