@@ -89,7 +89,10 @@ func (d *DigitalOcean) Refresh() {
 	d.Logger.Log("refreshing digitalocean")
 
 	for _, mod := range d.Modules {
-		go func(m modules.Module) { m.Refresh() }(mod)
+		go func(m modules.Module) {
+			m.Refresh()
+			m.Render()
+		}(mod)
 	}
 }
 

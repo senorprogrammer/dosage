@@ -12,6 +12,7 @@ import (
 // Databases is database
 type Databases struct {
 	modules.Base
+	Databases    []godo.Database
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
@@ -19,7 +20,8 @@ type Databases struct {
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, client *godo.Client) *Databases {
 	mod := &Databases{
-		Base: modules.NewBase(title),
+		Base:      modules.NewBase(title),
+		Databases: []godo.Database{},
 		PositionData: pieces.PositionData{
 			Row:       4,
 			Col:       2,
@@ -50,26 +52,38 @@ func (d *Databases) Refresh() {
 	}
 
 	d.SetAvailable(false)
-	d.GetView().SetText(d.data())
+
+	databases, err := d.fetch()
+	if err != nil {
+		d.LastError = err
+	} else {
+		d.LastError = nil
+		d.Databases = databases
+	}
+
 	d.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (d *Databases) Render() {
+	str := d.ToStr()
+	d.GetView().SetText(str)
+}
 
-func (d *Databases) data() string {
-	databases, err := d.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (d *Databases) ToStr() string {
+	if d.LastError != nil {
+		return d.LastError.Error()
 	}
 
-	if len(databases) == 0 {
-		return modules.EmptyDataLabel
+	if len(d.Databases) == 0 {
+		return modules.EmptyContentLabel
 	}
 
-	data := ""
+	str := ""
 
-	for idx, database := range databases {
-		data = data + fmt.Sprintf(
+	for idx, database := range d.Databases {
+		str = str + fmt.Sprintf(
 			"%3d\t%s\t%s\t%s\t%s\t%s\t%v\n",
 			(idx+1),
 			database.Name,
@@ -81,8 +95,10 @@ func (d *Databases) data() string {
 		)
 	}
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
 func (d *Databases) fetch() ([]godo.Database, error) {

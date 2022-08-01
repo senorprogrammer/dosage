@@ -6,6 +6,37 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_Clear(t *testing.T) {
+	tests := []struct {
+		name     string
+		messages []string
+		expected []string
+	}{
+		{
+			name:     "with no messages",
+			messages: []string{},
+			expected: []string{},
+		},
+		{
+			name:     "with messages",
+			messages: []string{"cat", "dog"},
+			expected: []string{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			logger := NewLogger("logger")
+			logger.Messages = tt.messages
+
+			logger.Clear()
+			actual := logger.Messages
+
+			assert.IsType(t, tt.expected, actual)
+		})
+	}
+}
+
 func Test_Log(t *testing.T) {
 	tests := []struct {
 		name     string

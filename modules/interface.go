@@ -15,4 +15,6 @@ type Module interface {
 	GetView() *tview.TextView
 
 	Refresh()
+	Render()
+	ToStr() string
 }

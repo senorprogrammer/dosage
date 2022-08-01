@@ -13,6 +13,7 @@ import (
 type ReservedIPs struct {
 	modules.Base
 	PositionData pieces.PositionData
+	ReservedIPs  []godo.ReservedIP
 	doClient     *godo.Client
 }
 
@@ -28,7 +29,8 @@ func NewReservedIPs(title string, client *godo.Client) *ReservedIPs {
 			MinHeight: 0,
 			MinWidth:  0,
 		},
-		doClient: client,
+		ReservedIPs: []godo.ReservedIP{},
+		doClient:    client,
 	}
 
 	mod.Enabled = true
@@ -50,35 +52,55 @@ func (r *ReservedIPs) Refresh() {
 	}
 
 	r.SetAvailable(false)
-	r.GetView().SetText(r.data())
+
+	rip, err := r.fetch()
+	if err != nil {
+		r.LastError = err
+	} else {
+		r.LastError = nil
+		r.ReservedIPs = rip
+	}
+
 	r.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (r *ReservedIPs) Render() {
+	str := r.ToStr()
+	r.GetView().SetText(str)
+}
 
-func (r *ReservedIPs) data() string {
-	reservedIPs, err := r.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (r *ReservedIPs) ToStr() string {
+	if r.LastError != nil {
+		return r.LastError.Error()
 	}
 
-	if len(reservedIPs) == 0 {
-		return modules.EmptyDataLabel
+	if len(r.ReservedIPs) == 0 {
+		return modules.EmptyContentLabel
 	}
 
-	data := ""
+	str := ""
 
-	for idx, reservedIP := range reservedIPs {
+	for idx, reservedIP := range r.ReservedIPs {
 		dropletID := 0
 		if reservedIP.Droplet != nil {
 			dropletID = reservedIP.Droplet.ID
 		}
 
-		data = data + fmt.Sprintf("%3d\t%10d\t%16s\t%s\n", (idx+1), dropletID, reservedIP.IP, reservedIP.Region.Slug)
+		str = str + fmt.Sprintf(
+			"%3d\t%10d\t%16s\t%s\n",
+			(idx+1),
+			dropletID,
+			reservedIP.IP,
+			reservedIP.Region.Slug,
+		)
 	}
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
 func (r *ReservedIPs) fetch() ([]godo.ReservedIP, error) {

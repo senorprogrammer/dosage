@@ -5,14 +5,16 @@ import (
 )
 
 const (
-	EmptyDataLabel = "none"
+	// EmptyContentLabel is the content to display if there is no content
+	EmptyContentLabel = "none"
 )
 
 // Base is base
 type Base struct {
-	Available bool // if a module is Available, it can be refreshed
+	Available bool // If a module is Available, it can be refreshed
 	Enabled   bool
 	Focus     bool
+	LastError error
 	Title     string
 	View      *tview.TextView
 }

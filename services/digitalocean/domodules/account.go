@@ -12,6 +12,8 @@ import (
 // Account is account
 type Account struct {
 	modules.Base
+
+	AccountInfo  *godo.Account
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
@@ -19,7 +21,8 @@ type Account struct {
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, client *godo.Client) *Account {
 	mod := &Account{
-		Base: modules.NewBase(title),
+		Base:        modules.NewBase(title),
+		AccountInfo: &godo.Account{},
 		PositionData: pieces.PositionData{
 			Row:       0,
 			Col:       0,
@@ -50,32 +53,47 @@ func (a *Account) Refresh() {
 	}
 
 	a.SetAvailable(false)
-	a.GetView().SetText(a.data())
+
+	accountInfo, err := a.fetch()
+	if err != nil {
+		a.LastError = err
+	} else {
+		a.LastError = nil
+		a.AccountInfo = accountInfo
+	}
+
 	a.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (a *Account) Render() {
+	str := a.ToStr()
+	a.GetView().SetText(str)
+}
 
-// data returns a string representation of the module
-// suitable for display onscreen
-func (a *Account) data() string {
-	accountInfo, err := a.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (a *Account) ToStr() string {
+	if a.LastError != nil {
+		return a.LastError.Error()
 	}
 
-	data := ""
+	if a.AccountInfo == nil {
+		return modules.EmptyContentLabel
+	}
 
-	data += fmt.Sprintf("Status: %s %s\n", accountInfo.Status, accountInfo.StatusMessage)
-	data += fmt.Sprintf("Team: %s\n", accountInfo.Team.Name)
-	data += "\n"
-	data += fmt.Sprintf("[green:]%s[white:]\n", "Limits")
-	data += fmt.Sprintf("%12s: %d\n", "Droplets", accountInfo.DropletLimit)
-	data += fmt.Sprintf("%12s: %d\n", "Reserved IPs", accountInfo.ReservedIPLimit)
-	data += fmt.Sprintf("%12s: %d\n", "Volumes", accountInfo.VolumeLimit)
+	str := ""
+	str += fmt.Sprintf("Status: %s %s\n", a.AccountInfo.Status, a.AccountInfo.StatusMessage)
+	str += fmt.Sprintf("Team: %s\n", a.AccountInfo.Team.Name)
+	str += "\n"
+	str += fmt.Sprintf("[green:]%s[white:]\n", "Limits")
+	str += fmt.Sprintf("%12s: %d\n", "Droplets", a.AccountInfo.DropletLimit)
+	str += fmt.Sprintf("%12s: %d\n", "Reserved IPs", a.AccountInfo.ReservedIPLimit)
+	str += fmt.Sprintf("%12s: %d\n", "Volumes", a.AccountInfo.VolumeLimit)
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 func (a *Account) fetch() (*godo.Account, error) {
 	acct, _, err := a.doClient.Account.Get(context.Background())

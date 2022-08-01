@@ -12,14 +12,16 @@ import (
 // Billing is billing
 type Billing struct {
 	modules.Base
-	PositionData pieces.PositionData
-	doClient     *godo.Client
+	BillingHistory []godo.BillingHistoryEntry
+	PositionData   pieces.PositionData
+	doClient       *godo.Client
 }
 
 // NewBilling creates and returns an instance of Billing
 func NewBilling(title string, client *godo.Client) *Billing {
 	mod := &Billing{
-		Base: modules.NewBase(title),
+		Base:           modules.NewBase(title),
+		BillingHistory: []godo.BillingHistoryEntry{},
 		PositionData: pieces.PositionData{
 			Row:       2,
 			Col:       7,
@@ -50,37 +52,51 @@ func (b *Billing) Refresh() {
 	}
 
 	b.SetAvailable(false)
-	b.GetView().SetText(b.data())
+
+	billingHistory, err := b.fetch()
+	if err != nil {
+		b.LastError = err
+	} else {
+		b.LastError = nil
+		b.BillingHistory = billingHistory
+	}
+
 	b.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (b *Billing) Render() {
+	str := b.ToStr()
+	b.GetView().SetText(str)
+}
 
-func (b *Billing) data() string {
-	billingHistory, err := b.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (b *Billing) ToStr() string {
+	if b.LastError != nil {
+		return b.LastError.Error()
 	}
 
-	if len(billingHistory) == 0 {
-		return modules.EmptyDataLabel
+	if len(b.BillingHistory) == 0 {
+		return modules.EmptyContentLabel
 	}
 
-	data := ""
+	str := ""
 
-	for idx, bhe := range billingHistory {
-		data = fmt.Sprintf(
+	for idx, bhe := range b.BillingHistory {
+		str = str + fmt.Sprintf(
 			"%3d\t%s\t%v\t%v\t%8s\n",
 			(idx+1),
 			*bhe.InvoiceID,
 			bhe.Date,
 			bhe.Amount,
 			bhe.Type,
-		) + data
+		) + str
 	}
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 func (b *Billing) fetch() ([]godo.BillingHistoryEntry, error) {
 	billingHistory := []godo.BillingHistoryEntry{}
