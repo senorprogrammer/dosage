@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -19,7 +20,7 @@ type Certificates struct {
 // NewCertificates creates and returns an instance of Certificates
 func NewCertificates(title string, client *godo.Client) *Certificates {
 	mod := &Certificates{
-		Base:         modules.NewBase(title),
+		Base:         modules.NewBase(title, 5*time.Second),
 		Certificates: []godo.Certificate{},
 		doClient:     client,
 	}
@@ -34,6 +35,8 @@ func NewCertificates(title string, client *godo.Client) *Certificates {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -62,6 +65,8 @@ func (c *Certificates) Refresh() {
 	}
 
 	c.SetAvailable(true)
+
+	c.Render()
 }
 
 // Render draws the current string representation into the view

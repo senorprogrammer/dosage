@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -19,7 +20,7 @@ type Billing struct {
 // NewBilling creates and returns an instance of Billing
 func NewBilling(title string, client *godo.Client) *Billing {
 	mod := &Billing{
-		Base:           modules.NewBase(title),
+		Base:           modules.NewBase(title, 5*time.Second),
 		BillingHistory: []godo.BillingHistoryEntry{},
 		doClient:       client,
 	}
@@ -34,6 +35,8 @@ func NewBilling(title string, client *godo.Client) *Billing {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -62,6 +65,8 @@ func (b *Billing) Refresh() {
 	}
 
 	b.SetAvailable(true)
+
+	b.Render()
 }
 
 // Render draws the current string representation into the view

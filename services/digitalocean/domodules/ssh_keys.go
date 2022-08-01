@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -19,7 +20,7 @@ type SSHKeys struct {
 // NewSSHKeys creates and returns an instance of SSHKeys
 func NewSSHKeys(title string, client *godo.Client) *SSHKeys {
 	mod := &SSHKeys{
-		Base:     modules.NewBase(title),
+		Base:     modules.NewBase(title, 5*time.Second),
 		SSHKeys:  []godo.Key{},
 		doClient: client,
 	}
@@ -34,6 +35,8 @@ func NewSSHKeys(title string, client *godo.Client) *SSHKeys {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -62,6 +65,8 @@ func (s *SSHKeys) Refresh() {
 	}
 
 	s.SetAvailable(true)
+
+	s.Render()
 }
 
 // Render draws the current string representation into the view

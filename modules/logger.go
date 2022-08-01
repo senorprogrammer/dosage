@@ -1,6 +1,10 @@
 package modules
 
-import "github.com/senorprogrammer/dosage/pieces"
+import (
+	"time"
+
+	"github.com/senorprogrammer/dosage/pieces"
+)
 
 // Logger stores and displays log messages emitted by other parts of the system.
 type Logger struct {
@@ -12,7 +16,7 @@ type Logger struct {
 // NewLogger creates and returns an instance of Logger
 func NewLogger(title string) *Logger {
 	mod := &Logger{
-		Base:     NewBase(title),
+		Base:     NewBase(title, 1*time.Second),
 		Messages: []string{},
 	}
 
@@ -26,6 +30,8 @@ func NewLogger(title string) *Logger {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -49,7 +55,9 @@ func (l *Logger) Log(msg string) {
 
 // Refresh updates the view content with the latest data
 // In the Logger, Refresh() is a null op, it doesn't call out to anything
-func (l *Logger) Refresh() {}
+func (l *Logger) Refresh() {
+	l.Render()
+}
 
 // Render draws the current string representation into the view
 func (l *Logger) Render() {

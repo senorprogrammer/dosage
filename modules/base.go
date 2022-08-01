@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"time"
+
 	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -10,19 +12,27 @@ const (
 	EmptyContentLabel = "none"
 )
 
+// const (
+// 	refreshInterval = 5
+// )
+
 // Base is base
 type Base struct {
-	Available    bool // If a module is Available, it can be refreshed
-	Enabled      bool
-	Focus        bool
-	LastError    error
-	PositionData pieces.PositionData
-	Title        string
-	View         *tview.TextView
+	Available       bool // If a module is Available, it can be refreshed
+	Enabled         bool
+	Focus           bool
+	LastError       error
+	PositionData    pieces.PositionData
+	QuitChan        chan struct{}
+	RefreshFunc     func()
+	RefreshInterval time.Duration
+	RefreshTicker   *time.Ticker
+	Title           string
+	View            *tview.TextView
 }
 
 // NewBase creates and returns an instance of Base
-func NewBase(title string) Base {
+func NewBase(title string, refreshInterval time.Duration) Base {
 	view := tview.NewTextView()
 	view.SetBorder(true)
 	view.SetScrollable(true)
@@ -31,13 +41,21 @@ func NewBase(title string) Base {
 	view.SetDynamicColors(true)
 	view.SetBorderPadding(0, 0, 1, 1)
 
-	return Base{
-		Available: true,  // Modules are available unless they're fetching data
-		Enabled:   false, // Modules are disabled by default, enabled explicitly
-		Focus:     false, // Modules are unfoused by default, receiving focus explicitly
-		Title:     title,
-		View:      view,
+	base := Base{
+		Available:       true,  // Modules are available unless they're fetching data
+		Enabled:         false, // Modules are disabled by default, enabled explicitly
+		Focus:           false, // Modules are unfoused by default, receiving focus explicitly
+		QuitChan:        make(chan struct{}),
+		RefreshFunc:     nil,
+		RefreshInterval: refreshInterval,
+		Title:           title,
+		View:            view,
 	}
+
+	// This ticker controls how often the module's data is refreshed and redrawn
+	base.RefreshTicker = time.NewTicker(base.RefreshInterval)
+
+	return base
 }
 
 /* -------------------- Exported Functions -------------------- */
@@ -70,6 +88,23 @@ func (b *Base) GetView() *tview.TextView {
 // SetAvailable sets whether or not this module is available for refreshing
 func (b *Base) SetAvailable(isAvailable bool) {
 	b.Available = isAvailable
+}
+
+// Run starts the refresh loop for this module
+func (b *Base) Run() {
+	go func(refreshFunc func()) {
+		refreshFunc()
+
+		for {
+			select {
+			case <-b.RefreshTicker.C:
+				refreshFunc()
+			case <-b.QuitChan:
+				b.RefreshTicker.Stop()
+				return
+			}
+		}
+	}(b.RefreshFunc)
 }
 
 /* -------------------- Unexported Functions -------------------- */

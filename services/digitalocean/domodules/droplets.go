@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/digitalocean/godo"
 	"github.com/senorprogrammer/dosage/modules"
@@ -19,7 +20,7 @@ type Droplets struct {
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, client *godo.Client) *Droplets {
 	mod := &Droplets{
-		Base:     modules.NewBase(title),
+		Base:     modules.NewBase(title, 5*time.Second),
 		Droplets: []godo.Droplet{},
 		doClient: client,
 	}
@@ -34,6 +35,8 @@ func NewDroplets(title string, client *godo.Client) *Droplets {
 		MinHeight: 0,
 		MinWidth:  0,
 	}
+
+	mod.RefreshFunc = mod.Refresh
 
 	return mod
 }
@@ -62,6 +65,8 @@ func (d *Droplets) Refresh() {
 	}
 
 	d.SetAvailable(true)
+
+	d.Render()
 }
 
 // Render draws the current string representation into the view

@@ -13,8 +13,7 @@ const (
 
 // Refresher handles refreshing everything
 type Refresher struct {
-	QuitChan chan struct{}
-
+	QuitChan      chan struct{}
 	RefreshTicker *time.Ticker
 	Services      map[services.ServiceName]services.Service
 	TViewApp      *tview.Application
@@ -53,9 +52,9 @@ func (r *Refresher) Run() {
 
 // refresh loops through all the modules and updates their contents
 func (r *Refresher) refresh() {
-	for _, svc := range r.Services {
-		go func(s services.Service) { s.Refresh() }(svc)
-	}
+	// for _, svc := range r.Services {
+	// 	go func(s services.Service) { s.Refresh() }(svc)
+	// }
 
 	r.TViewApp.Draw()
 }
