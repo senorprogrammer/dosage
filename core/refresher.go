@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/rivo/tview"
-	"github.com/senorprogrammer/dosage/services"
 )
 
 const (
@@ -15,16 +14,14 @@ const (
 type Refresher struct {
 	QuitChan      chan struct{}
 	RefreshTicker *time.Ticker
-	Services      map[services.ServiceName]services.Service
 	TViewApp      *tview.Application
 }
 
 // NewRefresher creates and returns an instance of Refresher
-func NewRefresher(svcs map[services.ServiceName]services.Service, tviewApp *tview.Application) *Refresher {
+func NewRefresher(tviewApp *tview.Application) *Refresher {
 	return &Refresher{
 		QuitChan:      make(chan struct{}),
 		RefreshTicker: time.NewTicker(refreshInterval * time.Second),
-		Services:      svcs,
 		TViewApp:      tviewApp,
 	}
 }

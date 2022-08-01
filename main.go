@@ -48,7 +48,7 @@ func main() {
 	servicer.LoadServices(flags, tviewPages, logger)
 
 	// Create the refresher, which handles the refresh loop
-	refresher = core.NewRefresher(servicer.GetServices(), tviewApp)
+	refresher = core.NewRefresher(tviewApp)
 	defer close(refresher.QuitChan)
 	refresher.Run()
 
