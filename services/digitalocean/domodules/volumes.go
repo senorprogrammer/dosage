@@ -18,9 +18,9 @@ type Volumes struct {
 }
 
 // NewVolumes creates and returns an instance of Storage
-func NewVolumes(title string, client *godo.Client, logger *modules.Logger) *Volumes {
+func NewVolumes(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Volumes {
 	mod := &Volumes{
-		Base:     modules.NewBase(title, 5*time.Second, logger),
+		Base:     modules.NewBase(title, refreshChan, 5*time.Second, logger),
 		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
@@ -69,6 +69,9 @@ func (v *Volumes) Refresh() {
 	v.SetAvailable(true)
 
 	v.Render()
+
+	// Tell the Refresher that there's new data to display
+	v.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view

@@ -1,8 +1,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/rivo/tview"
 )
 
@@ -12,17 +10,15 @@ const (
 
 // Refresher handles refreshing everything
 type Refresher struct {
-	QuitChan      chan struct{}
-	RefreshTicker *time.Ticker
-	TViewApp      *tview.Application
+	RefreshChan chan bool
+	TViewApp    *tview.Application
 }
 
 // NewRefresher creates and returns an instance of Refresher
 func NewRefresher(tviewApp *tview.Application) *Refresher {
 	return &Refresher{
-		QuitChan:      make(chan struct{}),
-		RefreshTicker: time.NewTicker(refreshInterval * time.Second),
-		TViewApp:      tviewApp,
+		RefreshChan: make(chan bool),
+		TViewApp:    tviewApp,
 	}
 }
 
@@ -35,11 +31,8 @@ func (r *Refresher) Run() {
 
 		for {
 			select {
-			case <-r.RefreshTicker.C:
+			case <-r.RefreshChan:
 				refreshFunc()
-			case <-r.QuitChan:
-				r.RefreshTicker.Stop()
-				return
 			}
 		}
 	}(r.refresh)

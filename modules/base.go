@@ -21,6 +21,7 @@ type Base struct {
 	Logger          *Logger
 	PositionData    pieces.PositionData
 	QuitChan        chan struct{}
+	RefreshChan     chan bool
 	RefreshFunc     func()
 	RefreshInterval time.Duration
 	RefreshTicker   *time.Ticker
@@ -29,7 +30,7 @@ type Base struct {
 }
 
 // NewBase creates and returns an instance of Base
-func NewBase(title string, refreshInterval time.Duration, logger *Logger) Base {
+func NewBase(title string, refreshChan chan bool, refreshInterval time.Duration, logger *Logger) Base {
 	view := tview.NewTextView()
 	view.SetBorder(true)
 	view.SetScrollable(true)
@@ -44,6 +45,7 @@ func NewBase(title string, refreshInterval time.Duration, logger *Logger) Base {
 		Focus:           false, // Modules are unfoused by default, receiving focus explicitly
 		Logger:          logger,
 		QuitChan:        make(chan struct{}),
+		RefreshChan:     refreshChan,
 		RefreshFunc:     nil,
 		RefreshInterval: refreshInterval,
 		Title:           title,

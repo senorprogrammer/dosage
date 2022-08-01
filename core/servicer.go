@@ -41,9 +41,9 @@ func (s *Servicer) GetServices() []services.Serviceable {
 }
 
 // LoadServices creates and stores instances of all the supported services
-func (s *Servicer) LoadServices(flags *flags.Flags, tviewPages *tview.Pages, logger *modules.Logger) []services.Serviceable {
+func (s *Servicer) LoadServices(flags *flags.Flags, tviewPages *tview.Pages, refreshChan chan bool, logger *modules.Logger) []services.Serviceable {
 	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages, logger)
-	digitalOcean.LoadModules()
+	digitalOcean.LoadModules(refreshChan)
 
 	s.services[digitalOcean.GetName()] = digitalOcean
 

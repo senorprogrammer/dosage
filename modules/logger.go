@@ -14,9 +14,9 @@ type Logger struct {
 }
 
 // NewLogger creates and returns an instance of Logger
-func NewLogger(title string) *Logger {
+func NewLogger(title string, refreshChan chan bool) *Logger {
 	mod := &Logger{
-		Base:     NewBase(title, 1*time.Second, nil),
+		Base:     NewBase(title, refreshChan, 1*time.Second, nil),
 		Messages: []string{},
 	}
 
@@ -57,6 +57,9 @@ func (l *Logger) Log(msg string) {
 // In the Logger, Refresh() is a null op, it doesn't call out to anything
 func (l *Logger) Refresh() {
 	l.Render()
+
+	// Tell the Refresher that there's new data to display
+	l.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view

@@ -18,9 +18,9 @@ type Account struct {
 }
 
 // NewAccount creates and returns an instance of Account
-func NewAccount(title string, client *godo.Client, logger *modules.Logger) *Account {
+func NewAccount(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Account {
 	mod := &Account{
-		Base:        modules.NewBase(title, 15*time.Second, logger),
+		Base:        modules.NewBase(title, refreshChan, 15*time.Second, logger),
 		AccountInfo: nil,
 		doClient:    client,
 	}
@@ -69,6 +69,9 @@ func (a *Account) Refresh() {
 	a.SetAvailable(true)
 
 	a.Render()
+
+	// Tell the Refresher that there's new data to display
+	a.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view

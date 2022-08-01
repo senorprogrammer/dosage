@@ -18,9 +18,9 @@ type Billing struct {
 }
 
 // NewBilling creates and returns an instance of Billing
-func NewBilling(title string, client *godo.Client, logger *modules.Logger) *Billing {
+func NewBilling(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Billing {
 	mod := &Billing{
-		Base:           modules.NewBase(title, 5*time.Second, logger),
+		Base:           modules.NewBase(title, refreshChan, 5*time.Second, logger),
 		BillingHistory: []godo.BillingHistoryEntry{},
 		doClient:       client,
 	}
@@ -69,6 +69,9 @@ func (b *Billing) Refresh() {
 	b.SetAvailable(true)
 
 	b.Render()
+
+	// Tell the Refresher that there's new data to display
+	b.RefreshChan <- true
 }
 
 // Render draws the current string representation into the view
