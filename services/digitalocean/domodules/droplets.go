@@ -82,10 +82,9 @@ func (d *Droplets) ToStr() string {
 
 	str := ""
 
-	for idx, droplet := range d.Droplets {
+	for _, droplet := range d.Droplets {
 		str = str + fmt.Sprintf(
-			"%3d\t%10d\t%s\t%s\n",
-			(idx+1),
+			"%10d\t%s\t%s\n",
 			droplet.ID,
 			droplet.Name,
 			pieces.ColorForState(droplet.Status, droplet.Status),

@@ -61,7 +61,6 @@ func (c *Certificates) Refresh() {
 		c.Certificates = certs
 	}
 
-	// c.GetView().SetText(c.ToStr())
 	c.SetAvailable(true)
 }
 
@@ -83,10 +82,9 @@ func (c *Certificates) ToStr() string {
 
 	str := ""
 
-	for idx, cert := range c.Certificates {
+	for _, cert := range c.Certificates {
 		str = str + fmt.Sprintf(
-			"%3d\t%s\t%s\t%s\t%s\n",
-			(idx+1),
+			"%s\t%s\t%s\t%s\n",
 			cert.ID,
 			cert.Name,
 			cert.Type,

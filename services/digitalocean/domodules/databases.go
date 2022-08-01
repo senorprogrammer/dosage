@@ -82,10 +82,9 @@ func (d *Databases) ToStr() string {
 
 	str := ""
 
-	for idx, database := range d.Databases {
+	for _, database := range d.Databases {
 		str = str + fmt.Sprintf(
-			"%3d\t%s\t%s\t%s\t%s\t%s\t%v\n",
-			(idx+1),
+			"%s\t%s\t%s\t%s\t%s\t%v\n",
 			database.Name,
 			database.EngineSlug,
 			pieces.ColorForState(database.Status, database.Status),
