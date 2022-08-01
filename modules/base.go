@@ -5,14 +5,16 @@ import (
 )
 
 const (
-	EmptyDataLabel = "none"
+	// EmptyContentLabel is the content to display if there is no content
+	EmptyContentLabel = "none"
 )
 
 // Base is base
 type Base struct {
-	Available bool // if a module is Available, it can be refreshed
+	Available bool // If a module is Available, it can be refreshed
 	Enabled   bool
 	Focus     bool
+	LastError error
 	Title     string
 	View      *tview.TextView
 }
@@ -27,9 +29,9 @@ func NewBase(title string) Base {
 	view.SetDynamicColors(true)
 
 	return Base{
-		Available: true,
-		Enabled:   false,
-		Focus:     false,
+		Available: true,  // Modules are available unless they're fetching data
+		Enabled:   false, // Modules are disabled by default, enabled explicitly
+		Focus:     false, // Modules are unfoused by default, receiving focus explicitly
 		Title:     title,
 		View:      view,
 	}

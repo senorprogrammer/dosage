@@ -10,13 +10,13 @@ import (
 
 // Servicer manages the services
 type Servicer struct {
-	Services []services.Service
+	Services map[services.ServiceName]services.Service
 }
 
 // NewServicer creates and returns an instance of Servicer
 func NewServicer() *Servicer {
 	s := &Servicer{
-		Services: []services.Service{},
+		Services: make(map[services.ServiceName]services.Service),
 	}
 
 	return s
@@ -25,16 +25,16 @@ func NewServicer() *Servicer {
 /* -------------------- Exported Functions -------------------- */
 
 // GetServices returns a slice of the loaded services
-func (s *Servicer) GetServices() []services.Service {
+func (s *Servicer) GetServices() map[services.ServiceName]services.Service {
 	return s.Services
 }
 
 // LoadServices creates and stores instances of all the supported services
-func (s *Servicer) LoadServices(flags *flags.Flags, tviewPages *tview.Pages, logger *modules.Logger) []services.Service {
+func (s *Servicer) LoadServices(flags *flags.Flags, tviewPages *tview.Pages, logger *modules.Logger) map[services.ServiceName]services.Service {
 	digitalOcean := digitalocean.NewDigitalOcean(flags.APIKey, tviewPages, logger)
 	digitalOcean.LoadModules()
 
-	s.Services = append(s.Services, digitalOcean)
+	s.Services[digitalOcean.GetName()] = digitalOcean
 
 	return s.Services
 }

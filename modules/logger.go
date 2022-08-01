@@ -31,6 +31,11 @@ func NewLogger(title string) *Logger {
 
 /* -------------------- Exported Functions -------------------- */
 
+// Clear deletes all messages from the Logger
+func (l *Logger) Clear() {
+	l.Messages = []string{}
+}
+
 // GetPositionData returns PositionData
 func (l *Logger) GetPositionData() *pieces.PositionData {
 	return &l.PositionData
@@ -39,25 +44,26 @@ func (l *Logger) GetPositionData() *pieces.PositionData {
 // Log prepends a log message to the Messages slice
 func (l *Logger) Log(msg string) {
 	l.Messages = append(l.Messages, msg)
-	l.Refresh()
 }
 
 // Refresh updates the view content with the latest data
-func (l *Logger) Refresh() {
-	l.GetView().SetText(l.data())
+// In the Logger, Refresh() is a null op, it doesn't call out to anything
+func (l *Logger) Refresh() {}
+
+// Render draws the current string representation into the view
+func (l *Logger) Render() {
+	str := l.ToStr()
+	l.GetView().SetText(str)
 }
 
-/* -------------------- Unexported Functions -------------------- */
-
-// data returns a string representation of the module
-// suitable for display onscreen
-func (l *Logger) data() string {
-	data := ""
+// ToStr returns a string representation of the module suitable for display onscreen
+func (l *Logger) ToStr() string {
+	str := ""
 
 	// Messages are displayed in LIFO order
 	for _, msg := range l.Messages {
-		data = msg + "\n" + data
+		str = msg + "\n" + str
 	}
 
-	return data
+	return str
 }

@@ -9,8 +9,10 @@ import (
 	"github.com/senorprogrammer/dosage/pieces"
 )
 
+// Certificates is certificates
 type Certificates struct {
 	modules.Base
+	Certificates []godo.Certificate
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
@@ -18,7 +20,8 @@ type Certificates struct {
 // NewCertificates creates and returns an instance of Certificates
 func NewCertificates(title string, client *godo.Client) *Certificates {
 	mod := &Certificates{
-		Base: modules.NewBase(title),
+		Base:         modules.NewBase(title),
+		Certificates: []godo.Certificate{},
 		PositionData: pieces.PositionData{
 			Row:       0,
 			Col:       11,
@@ -49,26 +52,39 @@ func (c *Certificates) Refresh() {
 	}
 
 	c.SetAvailable(false)
-	c.GetView().SetText(c.data())
+
+	certs, err := c.fetch()
+	if err != nil {
+		c.LastError = err
+	} else {
+		c.LastError = nil
+		c.Certificates = certs
+	}
+
+	// c.GetView().SetText(c.ToStr())
 	c.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (c *Certificates) Render() {
+	str := c.ToStr()
+	c.GetView().SetText(str)
+}
 
-func (c *Certificates) data() string {
-	certs, err := c.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (c *Certificates) ToStr() string {
+	if c.LastError != nil {
+		return c.LastError.Error()
 	}
 
-	if len(certs) == 0 {
-		return modules.EmptyDataLabel
+	if len(c.Certificates) == 0 {
+		return modules.EmptyContentLabel
 	}
 
-	data := ""
+	str := ""
 
-	for idx, cert := range certs {
-		data = data + fmt.Sprintf(
+	for idx, cert := range c.Certificates {
+		str = str + fmt.Sprintf(
 			"%3d\t%s\t%s\t%s\t%s\n",
 			(idx+1),
 			cert.ID,
@@ -78,8 +94,10 @@ func (c *Certificates) data() string {
 		)
 	}
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 func (c *Certificates) fetch() ([]godo.Certificate, error) {
 	certsList := []godo.Certificate{}

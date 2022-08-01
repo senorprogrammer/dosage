@@ -13,6 +13,7 @@ import (
 type Volumes struct {
 	modules.Base
 	PositionData pieces.PositionData
+	Volumes      []godo.Volume
 	doClient     *godo.Client
 }
 
@@ -28,6 +29,7 @@ func NewVolumes(title string, client *godo.Client) *Volumes {
 			MinHeight: 0,
 			MinWidth:  0,
 		},
+		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
 
@@ -50,26 +52,38 @@ func (v *Volumes) Refresh() {
 	}
 
 	v.SetAvailable(false)
-	v.GetView().SetText(v.data())
+
+	vols, err := v.fetch()
+	if err != nil {
+		v.LastError = err
+	} else {
+		v.LastError = nil
+		v.Volumes = vols
+	}
+
 	v.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (v *Volumes) Render() {
+	str := v.ToStr()
+	v.GetView().SetText(str)
+}
 
-func (v *Volumes) data() string {
-	volumes, err := v.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (v *Volumes) ToStr() string {
+	if v.LastError != nil {
+		return v.LastError.Error()
 	}
 
-	if len(volumes) == 0 {
-		return modules.EmptyDataLabel
+	if len(v.Volumes) == 0 {
+		return modules.EmptyContentLabel
 	}
 
-	data := ""
+	str := ""
 
-	for idx, vol := range volumes {
-		data = data + fmt.Sprintf(
+	for idx, vol := range v.Volumes {
+		str = str + fmt.Sprintf(
 			"%3d\t%s\t%d\t%s\t%s\n",
 			(idx+1),
 			vol.Name,
@@ -79,8 +93,10 @@ func (v *Volumes) data() string {
 		)
 	}
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
 func (v *Volumes) fetch() ([]godo.Volume, error) {

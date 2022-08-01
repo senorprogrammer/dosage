@@ -16,12 +16,12 @@ type Refresher struct {
 	QuitChan chan struct{}
 
 	RefreshTicker *time.Ticker
-	Services      []services.Service
+	Services      map[services.ServiceName]services.Service
 	TViewApp      *tview.Application
 }
 
 // NewRefresher creates and returns an instance of Refresher
-func NewRefresher(svcs []services.Service, tviewApp *tview.Application) *Refresher {
+func NewRefresher(svcs map[services.ServiceName]services.Service, tviewApp *tview.Application) *Refresher {
 	return &Refresher{
 		QuitChan:      make(chan struct{}),
 		RefreshTicker: time.NewTicker(refreshInterval * time.Second),

@@ -12,6 +12,7 @@ import (
 // Droplets displays a list of all your available DigitalOcean droplets.
 type Droplets struct {
 	modules.Base
+	Droplets     []godo.Droplet
 	PositionData pieces.PositionData
 	doClient     *godo.Client
 }
@@ -19,7 +20,8 @@ type Droplets struct {
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, client *godo.Client) *Droplets {
 	mod := &Droplets{
-		Base: modules.NewBase(title),
+		Base:     modules.NewBase(title),
+		Droplets: []godo.Droplet{},
 		PositionData: pieces.PositionData{
 			Row:       0,
 			Col:       2,
@@ -50,26 +52,38 @@ func (d *Droplets) Refresh() {
 	}
 
 	d.SetAvailable(false)
-	d.GetView().SetText(d.data())
+
+	droplets, err := d.fetch()
+	if err != nil {
+		d.LastError = err
+	} else {
+		d.LastError = nil
+		d.Droplets = droplets
+	}
+
 	d.SetAvailable(true)
 }
 
-/* -------------------- Unexported Functions -------------------- */
+// Render draws the current string representation into the view
+func (d *Droplets) Render() {
+	str := d.ToStr()
+	d.GetView().SetText(str)
+}
 
-func (d *Droplets) data() string {
-	droplets, err := d.fetch()
-	if err != nil {
-		return err.Error()
+// ToStr returns a string representation of the module suitable for display onscreen
+func (d *Droplets) ToStr() string {
+	if d.LastError != nil {
+		return d.LastError.Error()
 	}
 
-	if len(droplets) == 0 {
-		return modules.EmptyDataLabel
+	if len(d.Droplets) == 0 {
+		return modules.EmptyContentLabel
 	}
 
-	data := ""
+	str := ""
 
-	for idx, droplet := range droplets {
-		data = data + fmt.Sprintf(
+	for idx, droplet := range d.Droplets {
+		str = str + fmt.Sprintf(
 			"%3d\t%10d\t%s\t%s\n",
 			(idx+1),
 			droplet.ID,
@@ -78,8 +92,10 @@ func (d *Droplets) data() string {
 		)
 	}
 
-	return data
+	return str
 }
+
+/* -------------------- Unexported Functions -------------------- */
 
 // fetch uses the DigitalOcean API to fetch information about all the available droplets
 func (d *Droplets) fetch() ([]godo.Droplet, error) {
