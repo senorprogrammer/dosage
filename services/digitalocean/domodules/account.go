@@ -12,10 +12,8 @@ import (
 // Account is account
 type Account struct {
 	modules.Base
-
-	AccountInfo  *godo.Account
-	PositionData pieces.PositionData
-	doClient     *godo.Client
+	AccountInfo *godo.Account
+	doClient    *godo.Client
 }
 
 // NewAccount creates and returns an instance of Account
@@ -23,18 +21,19 @@ func NewAccount(title string, client *godo.Client) *Account {
 	mod := &Account{
 		Base:        modules.NewBase(title),
 		AccountInfo: &godo.Account{},
-		PositionData: pieces.PositionData{
-			Row:       0,
-			Col:       0,
-			RowSpan:   2,
-			ColSpan:   2,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
-		doClient: client,
+		doClient:    client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       0,
+		Col:       0,
+		RowSpan:   2,
+		ColSpan:   2,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

@@ -12,28 +12,28 @@ import (
 // SSHKeys is SSH keys
 type SSHKeys struct {
 	modules.Base
-	SSHKeys      []godo.Key
-	PositionData pieces.PositionData
-	doClient     *godo.Client
+	SSHKeys  []godo.Key
+	doClient *godo.Client
 }
 
 // NewSSHKeys creates and returns an instance of SSHKeys
 func NewSSHKeys(title string, client *godo.Client) *SSHKeys {
 	mod := &SSHKeys{
-		Base: modules.NewBase(title),
-		PositionData: pieces.PositionData{
-			Row:       2,
-			Col:       11,
-			RowSpan:   2,
-			ColSpan:   4,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
+		Base:     modules.NewBase(title),
 		SSHKeys:  []godo.Key{},
 		doClient: client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       2,
+		Col:       11,
+		RowSpan:   2,
+		ColSpan:   4,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

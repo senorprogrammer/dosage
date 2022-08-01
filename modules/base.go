@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/pieces"
 )
 
 const (
@@ -11,12 +12,13 @@ const (
 
 // Base is base
 type Base struct {
-	Available bool // If a module is Available, it can be refreshed
-	Enabled   bool
-	Focus     bool
-	LastError error
-	Title     string
-	View      *tview.TextView
+	Available    bool // If a module is Available, it can be refreshed
+	Enabled      bool
+	Focus        bool
+	LastError    error
+	PositionData pieces.PositionData
+	Title        string
+	View         *tview.TextView
 }
 
 // NewBase creates and returns an instance of Base
@@ -69,3 +71,5 @@ func (b *Base) GetView() *tview.TextView {
 func (b *Base) SetAvailable(isAvailable bool) {
 	b.Available = isAvailable
 }
+
+/* -------------------- Unexported Functions -------------------- */

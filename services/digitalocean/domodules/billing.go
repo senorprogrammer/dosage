@@ -13,7 +13,6 @@ import (
 type Billing struct {
 	modules.Base
 	BillingHistory []godo.BillingHistoryEntry
-	PositionData   pieces.PositionData
 	doClient       *godo.Client
 }
 
@@ -22,18 +21,19 @@ func NewBilling(title string, client *godo.Client) *Billing {
 	mod := &Billing{
 		Base:           modules.NewBase(title),
 		BillingHistory: []godo.BillingHistoryEntry{},
-		PositionData: pieces.PositionData{
-			Row:       2,
-			Col:       7,
-			RowSpan:   2,
-			ColSpan:   4,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
-		doClient: client,
+		doClient:       client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       2,
+		Col:       7,
+		RowSpan:   2,
+		ColSpan:   4,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }

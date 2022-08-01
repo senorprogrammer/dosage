@@ -12,9 +12,8 @@ import (
 // Droplets displays a list of all your available DigitalOcean droplets.
 type Droplets struct {
 	modules.Base
-	Droplets     []godo.Droplet
-	PositionData pieces.PositionData
-	doClient     *godo.Client
+	Droplets []godo.Droplet
+	doClient *godo.Client
 }
 
 // NewDroplets creates and returns an instance of Droplets
@@ -22,18 +21,19 @@ func NewDroplets(title string, client *godo.Client) *Droplets {
 	mod := &Droplets{
 		Base:     modules.NewBase(title),
 		Droplets: []godo.Droplet{},
-		PositionData: pieces.PositionData{
-			Row:       0,
-			Col:       2,
-			RowSpan:   2,
-			ColSpan:   5,
-			MinHeight: 0,
-			MinWidth:  0,
-		},
 		doClient: client,
 	}
 
 	mod.Enabled = true
+
+	mod.PositionData = pieces.PositionData{
+		Row:       0,
+		Col:       2,
+		RowSpan:   2,
+		ColSpan:   5,
+		MinHeight: 0,
+		MinWidth:  0,
+	}
 
 	return mod
 }
