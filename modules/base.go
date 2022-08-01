@@ -14,19 +14,21 @@ const (
 
 // Base is base
 type Base struct {
-	Available       bool // If a module is Available, it can be refreshed
-	Enabled         bool // If a module is Enabled, it can be refreshed
-	Focus           bool
-	LastError       error
-	Logger          *Logger
-	PositionData    pieces.PositionData
-	QuitChan        chan struct{}
-	RefreshChan     chan bool
-	RefreshFunc     func()
-	RefreshInterval time.Duration
-	RefreshTicker   *time.Ticker
-	Title           string
-	View            *tview.TextView
+	Available    bool  // If a module is Available, it can be refreshed
+	Enabled      bool  // If a module is Enabled, it can be refreshed
+	Focus        bool  // Whether or not this module should have the keyboard focus
+	LastError    error // If a refresh generates an error, the error will be stored here
+	Logger       *Logger
+	PositionData pieces.PositionData
+	Title        string          // The text string to be displayed at the top of the module view
+	View         *tview.TextView // The view to display the module data in
+
+	// Properties relevant to refreshing the module data
+	QuitChan        chan struct{} // The channel that's used to stop the RefreshTicker
+	RefreshChan     chan bool     // The channel to call into when a refresh completes
+	RefreshFunc     func()        // The function to execute when the RefreshTicker ticks
+	RefreshInterval time.Duration // Defines the number of seconds between data refreshes
+	RefreshTicker   *time.Ticker  // Controls how often, in seconds, the module will refresh its data
 }
 
 // NewBase creates and returns an instance of Base
