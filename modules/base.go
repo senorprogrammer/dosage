@@ -91,7 +91,7 @@ func (b *Base) GetTitle() string {
 	return b.Title
 }
 
-// GetView returns the tview.TextView used to display this module's data
+// GetView returns the tview.Primitive used to display this module's data
 func (b *Base) GetView() tview.Primitive {
 	return b.View
 }
