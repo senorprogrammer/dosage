@@ -7,6 +7,7 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/formatting"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -98,7 +99,7 @@ func (d *Droplets) ToStr() string {
 			"%10d\t%s\t%s\n",
 			droplet.ID,
 			droplet.Name,
-			pieces.ColorForState(droplet.Status, droplet.Status),
+			formatting.ColorForState(droplet.Status, droplet.Status),
 		)
 	}
 

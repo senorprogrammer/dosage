@@ -7,6 +7,7 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/formatting"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -98,7 +99,7 @@ func (d *Databases) ToStr() string {
 			"%s\t%s\t%s\t%s\t%s\t%v\n",
 			database.Name,
 			database.EngineSlug,
-			pieces.ColorForState(database.Status, database.Status),
+			formatting.ColorForState(database.Status, database.Status),
 			database.SizeSlug,
 			database.RegionSlug,
 			database.Tags,

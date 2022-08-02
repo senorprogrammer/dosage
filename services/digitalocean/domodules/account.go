@@ -7,6 +7,7 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/formatting"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -77,8 +78,8 @@ func (a *Account) Refresh() {
 
 // Render draws the current string representation into the view
 func (a *Account) Render() {
-	statusText := pieces.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status)
-	limitsLabel := pieces.Bold(pieces.Green("Limits"))
+	statusText := formatting.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status)
+	limitsLabel := formatting.Bold(formatting.Green("Limits"))
 
 	// Create the table
 	table := a.GetView().(*tview.Table)
@@ -114,7 +115,7 @@ func (a *Account) ToStr() string {
 	}
 
 	str := ""
-	str += fmt.Sprintf("Status: %s %s\n", pieces.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status), a.AccountInfo.StatusMessage)
+	str += fmt.Sprintf("Status: %s %s\n", formatting.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status), a.AccountInfo.StatusMessage)
 	str += fmt.Sprintf("Team: %s\n", a.AccountInfo.Team.Name)
 	str += "\n"
 	str += fmt.Sprintf("[green:]%s[white:]\n", "Limits")

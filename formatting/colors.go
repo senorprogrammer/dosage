@@ -1,4 +1,4 @@
-package pieces
+package formatting
 
 import "fmt"
 
