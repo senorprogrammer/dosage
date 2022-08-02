@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type Volumes struct {
 // NewVolumes creates and returns an instance of Storage
 func NewVolumes(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Volumes {
 	mod := &Volumes{
-		Base:     modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
@@ -77,7 +78,7 @@ func (v *Volumes) Refresh() {
 // Render draws the current string representation into the view
 func (v *Volumes) Render() {
 	str := v.ToStr()
-	v.GetView().SetText(str)
+	v.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
@@ -93,7 +94,7 @@ func (v *Volumes) ToStr() string {
 	str := ""
 
 	for _, vol := range v.Volumes {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%d\t%s\t%s\n",
 			vol.Name,
 			vol.SizeGigaBytes,
@@ -117,9 +118,7 @@ func (v *Volumes) fetch() ([]godo.Volume, error) {
 		return volumesList, err
 	}
 
-	for _, doVol := range doVols {
-		volumesList = append(volumesList, doVol)
-	}
+	volumesList = append(volumesList, doVols...)
 
 	return volumesList, nil
 }

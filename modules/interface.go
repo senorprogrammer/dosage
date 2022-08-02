@@ -12,7 +12,7 @@ type Module interface {
 	GetFocus() bool
 	GetPositionData() *pieces.PositionData
 	GetTitle() string
-	GetView() *tview.TextView
+	GetView() tview.Primitive
 
 	Refresh()
 	Render()

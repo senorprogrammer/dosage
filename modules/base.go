@@ -12,6 +12,14 @@ const (
 	EmptyContentLabel = "none"
 )
 
+// ViewType defines the enum that defines which TViews can be instantiated by modules
+type ViewType int64
+
+const (
+	WithTableView ViewType = iota
+	WithTextView
+)
+
 // Base is base
 type Base struct {
 	Available    bool  // If a module is Available, it can be refreshed
@@ -21,7 +29,7 @@ type Base struct {
 	Logger       *Logger
 	PositionData pieces.PositionData
 	Title        string          // The text string to be displayed at the top of the module view
-	View         *tview.TextView // The view to display the module data in
+	View         tview.Primitive // The view to display the module data in
 
 	// Properties relevant to refreshing the module data
 	QuitChan        chan struct{} // The channel that's used to stop the RefreshTicker
@@ -32,15 +40,7 @@ type Base struct {
 }
 
 // NewBase creates and returns an instance of Base
-func NewBase(title string, refreshChan chan bool, refreshInterval time.Duration, logger *Logger) Base {
-	view := tview.NewTextView()
-	view.SetBorder(true)
-	view.SetScrollable(true)
-	view.SetTitle(title)
-	view.SetWrap(false)
-	view.SetDynamicColors(true)
-	view.SetBorderPadding(0, 0, 1, 1)
-
+func NewBase(title string, viewType ViewType, refreshChan chan bool, refreshInterval time.Duration, logger *Logger) Base {
 	base := Base{
 		Available:       true,  // Modules are available unless they're fetching data
 		Enabled:         false, // Modules are disabled by default, enabled explicitly
@@ -51,11 +51,20 @@ func NewBase(title string, refreshChan chan bool, refreshInterval time.Duration,
 		RefreshFunc:     nil,
 		RefreshInterval: refreshInterval,
 		Title:           title,
-		View:            view,
 	}
 
 	// This ticker controls how often the module's data is refreshed and redrawn
 	base.RefreshTicker = time.NewTicker(base.RefreshInterval)
+
+	// Create and store the data view that'll be used by the underlying module to display data
+	switch viewType {
+	case WithTableView:
+		base.View = base.newTableView(title)
+	case WithTextView:
+		base.View = base.newTextView(title)
+	default:
+		base.View = base.newTextView(title)
+	}
 
 	return base
 }
@@ -82,8 +91,8 @@ func (b *Base) GetTitle() string {
 	return b.Title
 }
 
-// GetView returns the tview.TextView used to display this module's data
-func (b *Base) GetView() *tview.TextView {
+// GetView returns the tview.Primitive used to display this module's data
+func (b *Base) GetView() tview.Primitive {
 	return b.View
 }
 
@@ -110,3 +119,23 @@ func (b *Base) Run() {
 }
 
 /* -------------------- Unexported Functions -------------------- */
+
+func (b *Base) newTableView(title string) *tview.Table {
+	view := tview.NewTable()
+	view.SetBorder(true)
+	view.SetTitle(title)
+
+	return view
+}
+
+func (b *Base) newTextView(title string) *tview.TextView {
+	view := tview.NewTextView()
+	view.SetBorder(true)
+	view.SetScrollable(true)
+	view.SetTitle(title)
+	view.SetWrap(false)
+	view.SetDynamicColors(true)
+	view.SetBorderPadding(0, 0, 1, 1)
+
+	return view
+}

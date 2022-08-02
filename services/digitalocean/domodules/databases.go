@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type Databases struct {
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Databases {
 	mod := &Databases{
-		Base:      modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:      modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		Databases: []godo.Database{},
 		doClient:  client,
 	}
@@ -77,7 +78,7 @@ func (d *Databases) Refresh() {
 // Render draws the current string representation into the view
 func (d *Databases) Render() {
 	str := d.ToStr()
-	d.GetView().SetText(str)
+	d.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
@@ -93,7 +94,7 @@ func (d *Databases) ToStr() string {
 	str := ""
 
 	for _, database := range d.Databases {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%s\t%s\t%s\t%s\t%v\n",
 			database.Name,
 			database.EngineSlug,
@@ -120,9 +121,7 @@ func (d *Databases) fetch() ([]godo.Database, error) {
 			return databaseList, err
 		}
 
-		for _, doDb := range doDbs {
-			databaseList = append(databaseList, doDb)
-		}
+		databaseList = append(databaseList, doDbs...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

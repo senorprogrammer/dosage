@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type Billing struct {
 // NewBilling creates and returns an instance of Billing
 func NewBilling(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Billing {
 	mod := &Billing{
-		Base:           modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:           modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		BillingHistory: []godo.BillingHistoryEntry{},
 		doClient:       client,
 	}
@@ -77,7 +78,7 @@ func (b *Billing) Refresh() {
 // Render draws the current string representation into the view
 func (b *Billing) Render() {
 	str := b.ToStr()
-	b.GetView().SetText(str)
+	b.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
@@ -93,7 +94,7 @@ func (b *Billing) ToStr() string {
 	str := ""
 
 	for _, bhe := range b.BillingHistory {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%v\t%v\t%8s\n",
 			*bhe.InvoiceID,
 			bhe.Date,

@@ -1,29 +1,42 @@
 package pieces
 
+import "fmt"
+
 // ColorForState returns the 'body' text wrapped in colour tags
 // for the defined state
 func ColorForState(state string, body string) string {
-	left := "[white:]"
-	right := "[white:]"
 	str := body
 
 	switch state {
 	case "active":
-		left = "[green:]"
-		right = "[white:]"
+		str = Green(str)
 	case "off":
-		left = "[red:]"
-		right = "[white:]"
+		str = Red(str)
 	case "offline":
-		left = "[red:]"
-		right = "[white:]"
+		str = Red(str)
 	case "online":
-		left = "[green:]"
-		right = "[white:]"
+		str = Green(str)
 	default:
-		left = "[white:]"
-		right = "[white:]"
+		str = White(str)
 	}
 
-	return left + str + right
+	return str
+}
+
+/* -------------------- Color and Format Modifiers -------------------- */
+
+func Bold(body string) string {
+	return fmt.Sprintf("%s%s%s", "[::b]", body, "[::-]")
+}
+
+func Green(body string) string {
+	return fmt.Sprintf("%s%s%s", "[green:]", body, "[-:]")
+}
+
+func Red(body string) string {
+	return fmt.Sprintf("%s%s%s", "[red:]", body, "[-:]")
+}
+
+func White(body string) string {
+	return fmt.Sprintf("%s%s%s", "[white:]", body, "[-:]")
 }

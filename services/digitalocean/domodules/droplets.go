@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type Droplets struct {
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Droplets {
 	mod := &Droplets{
-		Base:     modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		Droplets: []godo.Droplet{},
 		doClient: client,
 	}
@@ -77,7 +78,7 @@ func (d *Droplets) Refresh() {
 // Render draws the current string representation into the view
 func (d *Droplets) Render() {
 	str := d.ToStr()
-	d.GetView().SetText(str)
+	d.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
@@ -93,7 +94,7 @@ func (d *Droplets) ToStr() string {
 	str := ""
 
 	for _, droplet := range d.Droplets {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%10d\t%s\t%s\n",
 			droplet.ID,
 			droplet.Name,
@@ -117,9 +118,7 @@ func (d *Droplets) fetch() ([]godo.Droplet, error) {
 			return dropletList, err
 		}
 
-		for _, doDroplet := range doDroplets {
-			dropletList = append(dropletList, doDroplet)
-		}
+		dropletList = append(dropletList, doDroplets...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

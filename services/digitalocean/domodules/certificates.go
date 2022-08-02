@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type Certificates struct {
 // NewCertificates creates and returns an instance of Certificates
 func NewCertificates(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Certificates {
 	mod := &Certificates{
-		Base:         modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:         modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		Certificates: []godo.Certificate{},
 		doClient:     client,
 	}
@@ -77,7 +78,7 @@ func (c *Certificates) Refresh() {
 // Render draws the current string representation into the view
 func (c *Certificates) Render() {
 	str := c.ToStr()
-	c.GetView().SetText(str)
+	c.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
@@ -93,7 +94,7 @@ func (c *Certificates) ToStr() string {
 	str := ""
 
 	for _, cert := range c.Certificates {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%s\t%s\t%s\n",
 			cert.ID,
 			cert.Name,
@@ -117,9 +118,7 @@ func (c *Certificates) fetch() ([]godo.Certificate, error) {
 			return certsList, err
 		}
 
-		for _, doCert := range doCerts {
-			certsList = append(certsList, doCert)
-		}
+		certsList = append(certsList, doCerts...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

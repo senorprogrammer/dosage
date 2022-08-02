@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type ReservedIPs struct {
 // NewReservedIPs creates and returns an instance of Droplets
 func NewReservedIPs(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *ReservedIPs {
 	mod := &ReservedIPs{
-		Base:        modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:        modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		ReservedIPs: []godo.ReservedIP{},
 		doClient:    client,
 	}
@@ -77,7 +78,7 @@ func (r *ReservedIPs) Refresh() {
 // Render draws the current string representation into the view
 func (r *ReservedIPs) Render() {
 	str := r.ToStr()
-	r.GetView().SetText(str)
+	r.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
@@ -98,7 +99,7 @@ func (r *ReservedIPs) ToStr() string {
 			dropletID = reservedIP.Droplet.ID
 		}
 
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%10d\t%16s\t%s\n",
 			dropletID,
 			reservedIP.IP,
@@ -122,9 +123,7 @@ func (r *ReservedIPs) fetch() ([]godo.ReservedIP, error) {
 			return reservedIPsList, err
 		}
 
-		for _, reservedIP := range doReservedIPs {
-			reservedIPsList = append(reservedIPsList, reservedIP)
-		}
+		reservedIPsList = append(reservedIPsList, doReservedIPs...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break
