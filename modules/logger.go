@@ -3,6 +3,7 @@ package modules
 import (
 	"time"
 
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/pieces"
 )
 
@@ -16,7 +17,7 @@ type Logger struct {
 // NewLogger creates and returns an instance of Logger
 func NewLogger(title string, refreshChan chan bool) *Logger {
 	mod := &Logger{
-		Base:     NewBase(title, refreshChan, 1*time.Second, nil),
+		Base:     NewBase(title, WithTextView, refreshChan, 1*time.Second, nil),
 		Messages: []string{},
 	}
 
@@ -65,7 +66,7 @@ func (l *Logger) Refresh() {
 // Render draws the current string representation into the view
 func (l *Logger) Render() {
 	str := l.ToStr()
-	l.GetView().SetText(str)
+	l.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen

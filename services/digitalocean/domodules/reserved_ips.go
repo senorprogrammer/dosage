@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type ReservedIPs struct {
 // NewReservedIPs creates and returns an instance of Droplets
 func NewReservedIPs(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *ReservedIPs {
 	mod := &ReservedIPs{
-		Base:        modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:        modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		ReservedIPs: []godo.ReservedIP{},
 		doClient:    client,
 	}
@@ -77,7 +78,7 @@ func (r *ReservedIPs) Refresh() {
 // Render draws the current string representation into the view
 func (r *ReservedIPs) Render() {
 	str := r.ToStr()
-	r.GetView().SetText(str)
+	r.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen

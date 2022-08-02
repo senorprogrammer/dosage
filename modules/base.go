@@ -12,6 +12,14 @@ const (
 	EmptyContentLabel = "none"
 )
 
+// ViewType defines the enum that defines which TViews can be instantiated by modules
+type ViewType int64
+
+const (
+	WithTableView ViewType = iota
+	WithTextView
+)
+
 // Base is base
 type Base struct {
 	Available    bool  // If a module is Available, it can be refreshed
@@ -21,7 +29,7 @@ type Base struct {
 	Logger       *Logger
 	PositionData pieces.PositionData
 	Title        string          // The text string to be displayed at the top of the module view
-	View         *tview.TextView // The view to display the module data in
+	View         tview.Primitive // The view to display the module data in
 
 	// Properties relevant to refreshing the module data
 	QuitChan        chan struct{} // The channel that's used to stop the RefreshTicker
@@ -32,7 +40,7 @@ type Base struct {
 }
 
 // NewBase creates and returns an instance of Base
-func NewBase(title string, refreshChan chan bool, refreshInterval time.Duration, logger *Logger) Base {
+func NewBase(title string, viewType ViewType, refreshChan chan bool, refreshInterval time.Duration, logger *Logger) Base {
 	view := tview.NewTextView()
 	view.SetBorder(true)
 	view.SetScrollable(true)
@@ -83,7 +91,7 @@ func (b *Base) GetTitle() string {
 }
 
 // GetView returns the tview.TextView used to display this module's data
-func (b *Base) GetView() *tview.TextView {
+func (b *Base) GetView() tview.Primitive {
 	return b.View
 }
 

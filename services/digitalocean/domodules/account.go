@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type Account struct {
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Account {
 	mod := &Account{
-		Base:        modules.NewBase(title, refreshChan, 15*time.Second, logger),
+		Base:        modules.NewBase(title, modules.WithTextView, refreshChan, 15*time.Second, logger),
 		AccountInfo: nil,
 		doClient:    client,
 	}
@@ -77,7 +78,7 @@ func (a *Account) Refresh() {
 // Render draws the current string representation into the view
 func (a *Account) Render() {
 	str := a.ToStr()
-	a.GetView().SetText(str)
+	a.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen

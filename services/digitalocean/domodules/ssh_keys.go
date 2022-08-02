@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/digitalocean/godo"
+	"github.com/rivo/tview"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -20,7 +21,7 @@ type SSHKeys struct {
 // NewSSHKeys creates and returns an instance of SSHKeys
 func NewSSHKeys(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *SSHKeys {
 	mod := &SSHKeys{
-		Base:     modules.NewBase(title, refreshChan, 5*time.Second, logger),
+		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
 		SSHKeys:  []godo.Key{},
 		doClient: client,
 	}
@@ -77,7 +78,7 @@ func (s *SSHKeys) Refresh() {
 // Render draws the current string representation into the view
 func (s *SSHKeys) Render() {
 	str := s.ToStr()
-	s.GetView().SetText(str)
+	s.GetView().(*tview.TextView).SetText(str)
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen
