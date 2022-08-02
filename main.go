@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/senorprogrammer/dosage/core"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
-	"github.com/senorprogrammer/dosage/splash"
+	"github.com/senorprogrammer/dosage/splashscreen"
 
 	"github.com/rivo/tview"
 )
@@ -21,10 +22,6 @@ var (
 	tviewApp  = tview.NewApplication()
 )
 
-func ll(msg string) {
-	logger.Log(msg)
-}
-
 /* -------------------- Main -------------------- */
 
 func main() {
@@ -34,10 +31,11 @@ func main() {
 	flags := flags.NewFlags()
 	err := flags.Parse()
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	splash.DisplaySplashScreen()
+	splashscreen.Show()
 
 	// Create the TView app that handles onscreen drawing
 	tviewPages := tview.NewPages()
@@ -54,7 +52,7 @@ func main() {
 	servicer = core.NewServicer()
 	servicer.LoadServices(flags, tviewPages, refresher.RefreshChan, logger)
 
-	ll("starting app...")
+	logger.Log("starting app...")
 
 	// Run the underlying app loop
 	if err := tviewApp.Run(); err != nil {

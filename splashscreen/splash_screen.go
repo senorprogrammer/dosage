@@ -1,4 +1,4 @@
-package splash
+package splashscreen
 
 import (
 	"fmt"
@@ -18,8 +18,8 @@ const (
 	splashInterval = 1
 )
 
-// DisplaySplashScreen displays the ASCII art on launch
-func DisplaySplashScreen() {
+// Show displays the ASCII art on launch
+func Show() {
 	fmt.Println(aurora.BrightGreen(splashMsg))
 	time.Sleep(splashInterval * time.Second)
 }
