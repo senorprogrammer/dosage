@@ -16,7 +16,10 @@ const (
 type ViewType int64
 
 const (
+	// WithTableView is used to indicate a table should be instantiated
 	WithTableView ViewType = iota
+
+	// WithTextView is used to indicate a textView should be instantiated
 	WithTextView
 )
 
