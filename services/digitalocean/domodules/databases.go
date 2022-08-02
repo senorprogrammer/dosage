@@ -94,7 +94,7 @@ func (d *Databases) ToStr() string {
 	str := ""
 
 	for _, database := range d.Databases {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%s\t%s\t%s\t%s\t%v\n",
 			database.Name,
 			database.EngineSlug,

@@ -94,7 +94,7 @@ func (d *Droplets) ToStr() string {
 	str := ""
 
 	for _, droplet := range d.Droplets {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%10d\t%s\t%s\n",
 			droplet.ID,
 			droplet.Name,

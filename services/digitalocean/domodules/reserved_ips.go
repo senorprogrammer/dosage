@@ -99,7 +99,7 @@ func (r *ReservedIPs) ToStr() string {
 			dropletID = reservedIP.Droplet.ID
 		}
 
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%10d\t%16s\t%s\n",
 			dropletID,
 			reservedIP.IP,

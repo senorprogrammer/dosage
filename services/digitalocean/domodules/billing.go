@@ -94,7 +94,7 @@ func (b *Billing) ToStr() string {
 	str := ""
 
 	for _, bhe := range b.BillingHistory {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%v\t%v\t%8s\n",
 			*bhe.InvoiceID,
 			bhe.Date,

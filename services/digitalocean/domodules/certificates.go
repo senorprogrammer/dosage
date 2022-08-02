@@ -94,7 +94,7 @@ func (c *Certificates) ToStr() string {
 	str := ""
 
 	for _, cert := range c.Certificates {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%s\t%s\t%s\n",
 			cert.ID,
 			cert.Name,

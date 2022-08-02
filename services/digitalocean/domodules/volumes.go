@@ -94,7 +94,7 @@ func (v *Volumes) ToStr() string {
 	str := ""
 
 	for _, vol := range v.Volumes {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%s\t%d\t%s\t%s\n",
 			vol.Name,
 			vol.SizeGigaBytes,

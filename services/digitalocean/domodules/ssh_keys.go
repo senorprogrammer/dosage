@@ -94,7 +94,7 @@ func (s *SSHKeys) ToStr() string {
 	str := ""
 
 	for _, key := range s.SSHKeys {
-		str = str + fmt.Sprintf(
+		str += fmt.Sprintf(
 			"%d\t%s\t%s\n",
 			key.ID,
 			key.Name,
