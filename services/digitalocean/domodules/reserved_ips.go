@@ -123,9 +123,7 @@ func (r *ReservedIPs) fetch() ([]godo.ReservedIP, error) {
 			return reservedIPsList, err
 		}
 
-		for _, reservedIP := range doReservedIPs {
-			reservedIPsList = append(reservedIPsList, reservedIP)
-		}
+		reservedIPsList = append(reservedIPsList, doReservedIPs...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

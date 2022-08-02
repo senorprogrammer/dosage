@@ -118,9 +118,7 @@ func (d *Droplets) fetch() ([]godo.Droplet, error) {
 			return dropletList, err
 		}
 
-		for _, doDroplet := range doDroplets {
-			dropletList = append(dropletList, doDroplet)
-		}
+		dropletList = append(dropletList, doDroplets...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

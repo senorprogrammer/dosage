@@ -121,9 +121,7 @@ func (d *Databases) fetch() ([]godo.Database, error) {
 			return databaseList, err
 		}
 
-		for _, doDb := range doDbs {
-			databaseList = append(databaseList, doDb)
-		}
+		databaseList = append(databaseList, doDbs...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

@@ -117,9 +117,7 @@ func (s *SSHKeys) fetch() ([]godo.Key, error) {
 			return keysList, err
 		}
 
-		for _, doKey := range doKeys {
-			keysList = append(keysList, doKey)
-		}
+		keysList = append(keysList, doKeys...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break

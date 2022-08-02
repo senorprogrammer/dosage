@@ -118,9 +118,7 @@ func (v *Volumes) fetch() ([]godo.Volume, error) {
 		return volumesList, err
 	}
 
-	for _, doVol := range doVols {
-		volumesList = append(volumesList, doVol)
-	}
+	volumesList = append(volumesList, doVols...)
 
 	return volumesList, nil
 }

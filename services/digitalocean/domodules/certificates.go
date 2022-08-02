@@ -118,9 +118,7 @@ func (c *Certificates) fetch() ([]godo.Certificate, error) {
 			return certsList, err
 		}
 
-		for _, doCert := range doCerts {
-			certsList = append(certsList, doCert)
-		}
+		certsList = append(certsList, doCerts...)
 
 		if resp.Links == nil || resp.Links.IsLastPage() {
 			break
