@@ -10,31 +10,38 @@ import (
 	"github.com/senorprogrammer/dosage/services/digitalocean/domodules"
 )
 
+const (
+	// ServiceName defines the unique name for this service
+	ServiceName = "digitalocean"
+)
+
 // DigitalOcean is the container application that handles all things DigitalOcean
 type DigitalOcean struct {
 	services.Base
 
-	DOClient      *godo.Client
-	FocusedModule *modules.Module
-	Logger        *modules.Logger
-	Modules       []modules.Module
+	DOClient *godo.Client
+	Logger   *modules.Logger
+	Modules  []modules.Module
 
 	Grid *tview.Grid
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
-func NewDigitalOcean(apiKey string, tviewPages *tview.Pages, logger *modules.Logger) *DigitalOcean {
+func NewDigitalOcean(apiKey string, serviceOpts services.ServiceOptionable) *DigitalOcean {
 	grid := newGrid(" DigitalOcean ")
-	tviewPages.AddPage("digitalocean", grid, true, true)
+	serviceOpts.GetPages().AddPage(ServiceName, grid, true, true)
 
-	return &DigitalOcean{
-		Base:          services.Base{Name: "digitalocean"},
-		DOClient:      godo.NewFromToken(apiKey),
-		FocusedModule: nil,
-		Logger:        logger,
-		Modules:       []modules.Module{},
-		Grid:          grid,
+	svc := &DigitalOcean{
+		Base:     services.Base{Name: ServiceName},
+		DOClient: godo.NewFromToken(apiKey),
+		Logger:   serviceOpts.GetLogger(),
+		Modules:  []modules.Module{},
+		Grid:     grid,
 	}
+
+	svc.LoadModules(serviceOpts.GetRefreshChan())
+
+	return svc
 }
 
 /* -------------------- Exported Functions -------------------- */
