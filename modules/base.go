@@ -41,14 +41,6 @@ type Base struct {
 
 // NewBase creates and returns an instance of Base
 func NewBase(title string, viewType ViewType, refreshChan chan bool, refreshInterval time.Duration, logger *Logger) Base {
-	view := tview.NewTextView()
-	view.SetBorder(true)
-	view.SetScrollable(true)
-	view.SetTitle(title)
-	view.SetWrap(false)
-	view.SetDynamicColors(true)
-	view.SetBorderPadding(0, 0, 1, 1)
-
 	base := Base{
 		Available:       true,  // Modules are available unless they're fetching data
 		Enabled:         false, // Modules are disabled by default, enabled explicitly
@@ -59,11 +51,13 @@ func NewBase(title string, viewType ViewType, refreshChan chan bool, refreshInte
 		RefreshFunc:     nil,
 		RefreshInterval: refreshInterval,
 		Title:           title,
-		View:            view,
 	}
 
 	// This ticker controls how often the module's data is refreshed and redrawn
 	base.RefreshTicker = time.NewTicker(base.RefreshInterval)
+
+	// Create and store the data view that'll be used by the underlying module to display data
+	base.View = base.newTextView(title)
 
 	return base
 }
@@ -118,3 +112,15 @@ func (b *Base) Run() {
 }
 
 /* -------------------- Unexported Functions -------------------- */
+
+func (b *Base) newTextView(title string) *tview.TextView {
+	view := tview.NewTextView()
+	view.SetBorder(true)
+	view.SetScrollable(true)
+	view.SetTitle(title)
+	view.SetWrap(false)
+	view.SetDynamicColors(true)
+	view.SetBorderPadding(0, 0, 1, 1)
+
+	return view
+}
