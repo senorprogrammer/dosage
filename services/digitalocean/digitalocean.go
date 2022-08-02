@@ -1,16 +1,15 @@
 package digitalocean
 
 import (
-	"fmt"
-
 	"github.com/digitalocean/godo"
-	"github.com/rivo/tview"
-	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/services"
 	"github.com/senorprogrammer/dosage/services/digitalocean/domodules"
 )
 
 const (
+	// GridTitle defines the title to display at the top of the tview.Page
+	GridTitle = " DigitalOcean "
+
 	// ServiceName defines the unique name for this service
 	ServiceName = "digitalocean"
 )
@@ -18,28 +17,19 @@ const (
 // DigitalOcean is the container application that handles all things DigitalOcean
 type DigitalOcean struct {
 	services.Base
-
 	DOClient *godo.Client
-	Logger   *modules.Logger
-	Modules  []modules.Module
-
-	Grid *tview.Grid
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
 func NewDigitalOcean(apiKey string, serviceOpts services.ServiceOptionable) *DigitalOcean {
-	grid := newGrid(" DigitalOcean ")
-	serviceOpts.GetPages().AddPage(ServiceName, grid, true, true)
-
 	svc := &DigitalOcean{
-		Base:     services.Base{Name: ServiceName},
+		Base:     services.NewBase(ServiceName, GridTitle, serviceOpts.GetLogger()),
 		DOClient: godo.NewFromToken(apiKey),
-		Logger:   serviceOpts.GetLogger(),
-		Modules:  []modules.Module{},
-		Grid:     grid,
 	}
 
 	svc.LoadModules(serviceOpts.GetRefreshChan())
+
+	serviceOpts.GetPages().AddPage(ServiceName, svc.Grid, true, true)
 
 	return svc
 }
@@ -71,7 +61,6 @@ func (d *DigitalOcean) LoadModules(refreshChan chan bool) {
 	d.Modules = append(d.Modules, storage)
 
 	for _, mod := range d.Modules {
-		// Disabled modules do not get loaded
 		if !mod.GetEnabled() {
 			continue
 		}
@@ -97,17 +86,4 @@ func (d *DigitalOcean) LoadModules(refreshChan chan bool) {
 
 		mod.Run()
 	}
-}
-
-/* -------------------- Unexported Functions -------------------- */
-
-// Create the grid that holds the module views
-func newGrid(appName string) *tview.Grid {
-	grid := tview.NewGrid()
-	grid.SetBorder(true)
-	grid.SetTitle(fmt.Sprintf(" %s ", appName))
-	grid.SetRows(8, 8, 8, 8, 8, 8, 8, 8, 8, 0)
-	grid.SetColumns(12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 0)
-
-	return grid
 }
