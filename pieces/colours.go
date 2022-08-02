@@ -1,5 +1,7 @@
 package pieces
 
+import "fmt"
+
 // ColorForState returns the 'body' text wrapped in colour tags
 // for the defined state
 func ColorForState(state string, body string) string {
@@ -26,4 +28,14 @@ func ColorForState(state string, body string) string {
 	}
 
 	return left + str + right
+}
+
+/* -------------------- Color and Format Modifiers -------------------- */
+
+func Bold(body string) string {
+	return fmt.Sprintf("%s%s%s", "[::b]", body, "[::-]")
+}
+
+func Green(body string) string {
+	return fmt.Sprintf("%s%s%s", "[green:]", body, "[white:]")
 }

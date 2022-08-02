@@ -21,7 +21,7 @@ type Account struct {
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Account {
 	mod := &Account{
-		Base:        modules.NewBase(title, modules.WithTextView, refreshChan, 15*time.Second, logger),
+		Base:        modules.NewBase(title, modules.WithTableView, refreshChan, 15*time.Second, logger),
 		AccountInfo: nil,
 		doClient:    client,
 	}
@@ -77,8 +77,30 @@ func (a *Account) Refresh() {
 
 // Render draws the current string representation into the view
 func (a *Account) Render() {
-	str := a.ToStr()
-	a.GetView().(*tview.TextView).SetText(str)
+	statusText := pieces.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status)
+	limitsLabel := pieces.Bold(pieces.Green("Limits"))
+
+	// Create the table
+	table := a.GetView().(*tview.Table)
+	table.Clear()
+
+	table.SetCell(0, 0, tview.NewTableCell("Status:").SetAlign(tview.AlignRight))
+	table.SetCell(0, 1, tview.NewTableCell(fmt.Sprint(statusText)))
+
+	table.SetCell(1, 0, tview.NewTableCell("Team:").SetAlign(tview.AlignRight))
+	table.SetCell(1, 1, tview.NewTableCell(a.AccountInfo.Team.Name))
+
+	table.SetCell(2, 0, tview.NewTableCell(""))
+	table.SetCell(3, 0, tview.NewTableCell(limitsLabel))
+
+	table.SetCell(4, 0, tview.NewTableCell("Droplets:").SetAlign(tview.AlignRight))
+	table.SetCell(4, 1, tview.NewTableCell(fmt.Sprint(a.AccountInfo.DropletLimit)))
+
+	table.SetCell(5, 0, tview.NewTableCell("Reserved IPs:").SetAlign(tview.AlignRight))
+	table.SetCell(5, 1, tview.NewTableCell(fmt.Sprint(a.AccountInfo.ReservedIPLimit)))
+
+	table.SetCell(6, 0, tview.NewTableCell("Volumes:").SetAlign(tview.AlignRight))
+	table.SetCell(6, 1, tview.NewTableCell(fmt.Sprint(a.AccountInfo.VolumeLimit)))
 }
 
 // ToStr returns a string representation of the module suitable for display onscreen

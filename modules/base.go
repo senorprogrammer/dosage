@@ -57,7 +57,14 @@ func NewBase(title string, viewType ViewType, refreshChan chan bool, refreshInte
 	base.RefreshTicker = time.NewTicker(base.RefreshInterval)
 
 	// Create and store the data view that'll be used by the underlying module to display data
-	base.View = base.newTextView(title)
+	switch viewType {
+	case WithTableView:
+		base.View = base.newTableView(title)
+	case WithTextView:
+		base.View = base.newTextView(title)
+	default:
+		base.View = base.newTextView(title)
+	}
 
 	return base
 }
@@ -112,6 +119,14 @@ func (b *Base) Run() {
 }
 
 /* -------------------- Unexported Functions -------------------- */
+
+func (b *Base) newTableView(title string) *tview.Table {
+	view := tview.NewTable()
+	view.SetBorder(true)
+	view.SetTitle(title)
+
+	return view
+}
 
 func (b *Base) newTextView(title string) *tview.TextView {
 	view := tview.NewTextView()
