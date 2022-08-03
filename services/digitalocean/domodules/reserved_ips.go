@@ -7,6 +7,7 @@ import (
 
 	"github.com/digitalocean/godo"
 	"github.com/rivo/tview"
+	"github.com/senorprogrammer/dosage/formatting"
 	"github.com/senorprogrammer/dosage/modules"
 	"github.com/senorprogrammer/dosage/pieces"
 )
@@ -21,8 +22,8 @@ type ReservedIPs struct {
 // NewReservedIPs creates and returns an instance of Droplets
 func NewReservedIPs(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *ReservedIPs {
 	mod := &ReservedIPs{
-		Base:        modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
-		ReservedIPs: []godo.ReservedIP{},
+		Base:        modules.NewBase(title, modules.WithTableView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
+		ReservedIPs: nil,
 		doClient:    client,
 	}
 
@@ -30,7 +31,7 @@ func NewReservedIPs(title string, refreshChan chan bool, client *godo.Client, lo
 
 	mod.PositionData = pieces.PositionData{
 		Row:       2,
-		Col:       2,
+		Col:       3,
 		RowSpan:   2,
 		ColSpan:   5,
 		MinHeight: 0,
@@ -77,37 +78,34 @@ func (r *ReservedIPs) Refresh() {
 
 // Render draws the current string representation into the view
 func (r *ReservedIPs) Render() {
-	str := r.ToStr()
-	r.GetView().(*tview.TextView).SetText(str)
-}
+	table := r.GetView().(*tview.Table)
+	table.Clear()
 
-// ToStr returns a string representation of the module suitable for display onscreen
-func (r *ReservedIPs) ToStr() string {
+	if r.ReservedIPs == nil {
+		table.SetCell(0, 0, tview.NewTableCell("ReservedIPs are nil"))
+		return
+	}
+
 	if r.LastError != nil {
-		return r.LastError.Error()
+		table.SetCell(0, 0, tview.NewTableCell(r.LastError.Error()))
+		return
 	}
 
-	if len(r.ReservedIPs) == 0 {
-		return modules.EmptyContentLabel
+	for idx, header := range []string{"Droplet ID", "IP", "Region"} {
+		table.SetCell(0, idx, tview.NewTableCell(formatting.Bold(formatting.Underline(header))).SetAlign(tview.AlignCenter))
 	}
 
-	str := ""
-
-	for _, reservedIP := range r.ReservedIPs {
+	for idx, ip := range r.ReservedIPs {
 		dropletID := 0
-		if reservedIP.Droplet != nil {
-			dropletID = reservedIP.Droplet.ID
+		if ip.Droplet != nil {
+			dropletID = ip.Droplet.ID
 		}
 
-		str += fmt.Sprintf(
-			"%10d\t%16s\t%s\n",
-			dropletID,
-			reservedIP.IP,
-			reservedIP.Region.Slug,
-		)
+		row := idx + 1
+		table.SetCell(row, 0, tview.NewTableCell(fmt.Sprint(dropletID)).SetAlign(tview.AlignRight))
+		table.SetCell(row, 1, tview.NewTableCell(ip.IP))
+		table.SetCell(row, 2, tview.NewTableCell(ip.Region.Slug))
 	}
-
-	return str
 }
 
 /* -------------------- Unexported Functions -------------------- */

@@ -21,7 +21,7 @@ type Certificates struct {
 // NewCertificates creates and returns an instance of Certificates
 func NewCertificates(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Certificates {
 	mod := &Certificates{
-		Base:         modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
+		Base:         modules.NewBase(title, modules.WithTextView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		Certificates: []godo.Certificate{},
 		doClient:     client,
 	}
@@ -30,7 +30,7 @@ func NewCertificates(title string, refreshChan chan bool, client *godo.Client, l
 
 	mod.PositionData = pieces.PositionData{
 		Row:       0,
-		Col:       11,
+		Col:       12,
 		RowSpan:   2,
 		ColSpan:   4,
 		MinHeight: 0,

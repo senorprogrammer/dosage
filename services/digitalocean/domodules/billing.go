@@ -21,7 +21,7 @@ type Billing struct {
 // NewBilling creates and returns an instance of Billing
 func NewBilling(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Billing {
 	mod := &Billing{
-		Base:           modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
+		Base:           modules.NewBase(title, modules.WithTextView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		BillingHistory: []godo.BillingHistoryEntry{},
 		doClient:       client,
 	}
@@ -30,7 +30,7 @@ func NewBilling(title string, refreshChan chan bool, client *godo.Client, logger
 
 	mod.PositionData = pieces.PositionData{
 		Row:       2,
-		Col:       7,
+		Col:       8,
 		RowSpan:   2,
 		ColSpan:   4,
 		MinHeight: 0,

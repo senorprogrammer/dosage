@@ -21,7 +21,7 @@ type SSHKeys struct {
 // NewSSHKeys creates and returns an instance of SSHKeys
 func NewSSHKeys(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *SSHKeys {
 	mod := &SSHKeys{
-		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
+		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		SSHKeys:  []godo.Key{},
 		doClient: client,
 	}
@@ -30,7 +30,7 @@ func NewSSHKeys(title string, refreshChan chan bool, client *godo.Client, logger
 
 	mod.PositionData = pieces.PositionData{
 		Row:       2,
-		Col:       11,
+		Col:       12,
 		RowSpan:   2,
 		ColSpan:   4,
 		MinHeight: 0,

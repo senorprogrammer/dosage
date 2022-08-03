@@ -22,7 +22,7 @@ type Databases struct {
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Databases {
 	mod := &Databases{
-		Base:      modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
+		Base:      modules.NewBase(title, modules.WithTextView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		Databases: []godo.Database{},
 		doClient:  client,
 	}
@@ -31,7 +31,7 @@ func NewDatabases(title string, refreshChan chan bool, client *godo.Client, logg
 
 	mod.PositionData = pieces.PositionData{
 		Row:       4,
-		Col:       2,
+		Col:       3,
 		RowSpan:   2,
 		ColSpan:   9,
 		MinHeight: 0,

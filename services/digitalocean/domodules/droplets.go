@@ -22,8 +22,8 @@ type Droplets struct {
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Droplets {
 	mod := &Droplets{
-		Base:     modules.NewBase(title, modules.WithTableView, refreshChan, 5*time.Second, logger),
-		Droplets: []godo.Droplet{},
+		Base:     modules.NewBase(title, modules.WithTableView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
+		Droplets: nil,
 		doClient: client,
 	}
 
@@ -31,7 +31,7 @@ func NewDroplets(title string, refreshChan chan bool, client *godo.Client, logge
 
 	mod.PositionData = pieces.PositionData{
 		Row:       0,
-		Col:       2,
+		Col:       3,
 		RowSpan:   2,
 		ColSpan:   5,
 		MinHeight: 0,
@@ -81,15 +81,25 @@ func (d *Droplets) Render() {
 	table := d.GetView().(*tview.Table)
 	table.Clear()
 
+	if d.Droplets == nil {
+		table.SetCell(0, 0, tview.NewTableCell("Droplets are nil"))
+		return
+	}
+
+	if d.LastError != nil {
+		table.SetCell(0, 0, tview.NewTableCell(d.LastError.Error()))
+		return
+	}
+
 	for idx, header := range []string{"ID", "Name", "Status", "Region"} {
-		table.SetCell(0, idx, tview.NewTableCell(formatting.Bold(formatting.Underline(header))))
+		table.SetCell(0, idx, tview.NewTableCell(formatting.Bold(formatting.Underline(header))).SetAlign(tview.AlignCenter))
 	}
 
 	for idx, droplet := range d.Droplets {
 		dropletStatus := formatting.ColorForState(droplet.Status, droplet.Status)
 
 		row := idx + 1
-		table.SetCell(row, 0, tview.NewTableCell(fmt.Sprint(droplet.ID)))
+		table.SetCell(row, 0, tview.NewTableCell(fmt.Sprint(droplet.ID)).SetAlign(tview.AlignRight))
 		table.SetCell(row, 1, tview.NewTableCell(droplet.Name))
 		table.SetCell(row, 2, tview.NewTableCell(dropletStatus))
 		table.SetCell(row, 3, tview.NewTableCell(droplet.Region.Slug))

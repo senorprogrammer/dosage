@@ -8,6 +8,9 @@ import (
 )
 
 const (
+	// DefaultRefreshSeconds defines how often the module data should refresh
+	DefaultRefreshSeconds = 30
+
 	// EmptyContentLabel is the content to display if there is no content
 	EmptyContentLabel = "none"
 )

@@ -22,7 +22,7 @@ type Account struct {
 // NewAccount creates and returns an instance of Account
 func NewAccount(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Account {
 	mod := &Account{
-		Base:        modules.NewBase(title, modules.WithTableView, refreshChan, 15*time.Second, logger),
+		Base:        modules.NewBase(title, modules.WithTableView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		AccountInfo: nil,
 		doClient:    client,
 	}
@@ -33,7 +33,7 @@ func NewAccount(title string, refreshChan chan bool, client *godo.Client, logger
 		Row:       0,
 		Col:       0,
 		RowSpan:   2,
-		ColSpan:   2,
+		ColSpan:   3,
 		MinHeight: 0,
 		MinWidth:  0,
 	}
@@ -78,12 +78,21 @@ func (a *Account) Refresh() {
 
 // Render draws the current string representation into the view
 func (a *Account) Render() {
-	statusText := formatting.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status)
-	limitsLabel := formatting.Bold(formatting.Green("Limits"))
-
-	// Create the table
 	table := a.GetView().(*tview.Table)
 	table.Clear()
+
+	if a.AccountInfo == nil {
+		table.SetCell(0, 0, tview.NewTableCell("AccountInfo is nil"))
+		return
+	}
+
+	if a.LastError != nil {
+		table.SetCell(0, 0, tview.NewTableCell(a.LastError.Error()))
+		return
+	}
+
+	statusText := formatting.ColorForState(a.AccountInfo.Status, a.AccountInfo.Status)
+	limitsLabel := formatting.Bold(formatting.Green("Limits"))
 
 	table.SetCell(0, 0, tview.NewTableCell("Status:").SetAlign(tview.AlignRight))
 	table.SetCell(0, 1, tview.NewTableCell(fmt.Sprint(statusText)))

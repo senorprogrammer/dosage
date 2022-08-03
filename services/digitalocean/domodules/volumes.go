@@ -21,7 +21,7 @@ type Volumes struct {
 // NewVolumes creates and returns an instance of Storage
 func NewVolumes(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Volumes {
 	mod := &Volumes{
-		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
+		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		Volumes:  []godo.Volume{},
 		doClient: client,
 	}
@@ -30,7 +30,7 @@ func NewVolumes(title string, refreshChan chan bool, client *godo.Client, logger
 
 	mod.PositionData = pieces.PositionData{
 		Row:       0,
-		Col:       7,
+		Col:       8,
 		RowSpan:   2,
 		ColSpan:   4,
 		MinHeight: 0,
