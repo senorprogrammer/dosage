@@ -29,8 +29,6 @@ func NewDigitalOcean(apiKey string, serviceOpts services.ServiceOptionable) *Dig
 
 	svc.LoadModules(serviceOpts.GetRefreshChan())
 
-	serviceOpts.GetPages().AddPage(ServiceName, svc.Grid, true, true)
-
 	return svc
 }
 

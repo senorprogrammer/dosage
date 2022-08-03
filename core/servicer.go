@@ -48,6 +48,11 @@ func (s *Servicer) LoadServices(flags *flags.Flags, tviewPages *tview.Pages, ref
 		RefreshChan: refreshChan,
 	}
 
-	// Add the services
+	// Create the services
 	s.services[digitalocean.ServiceName] = digitalocean.NewDigitalOcean(flags.APIKey, serviceOpts)
+
+	// Add the services's Grids to the Pages
+	for _, svc := range s.services {
+		tviewPages.AddPage(string(svc.GetName()), svc.GetGrid(), true, true)
+	}
 }

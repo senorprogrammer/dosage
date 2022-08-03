@@ -32,6 +32,11 @@ func NewBase(serviceName ServiceName, gridTitle string, logger *modules.Logger) 
 
 /* -------------------- Exported Functions -------------------- */
 
+// GetGrid returns the grid used to display the modules
+func (b *Base) GetGrid() *tview.Grid {
+	return b.Grid
+}
+
 // GetName returns the name of the service
 func (b *Base) GetName() ServiceName {
 	return b.Name
