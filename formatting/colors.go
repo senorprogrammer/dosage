@@ -23,11 +23,7 @@ func ColorForState(state string, body string) string {
 	return str
 }
 
-/* -------------------- Color and Format Modifiers -------------------- */
-
-func Bold(body string) string {
-	return fmt.Sprintf("%s%s%s", "[::b]", body, "[::-]")
-}
+/* -------------------- Color Functions -------------------- */
 
 func Green(body string) string {
 	return fmt.Sprintf("%s%s%s", "[green:]", body, "[-:]")
@@ -39,4 +35,14 @@ func Red(body string) string {
 
 func White(body string) string {
 	return fmt.Sprintf("%s%s%s", "[white:]", body, "[-:]")
+}
+
+/* -------------------- Formatting Functions -------------------- */
+
+func Bold(body string) string {
+	return fmt.Sprintf("%s%s%s", "[::b]", body, "[::-]")
+}
+
+func Underline(body string) string {
+	return fmt.Sprintf("%s%s%s", "[::u]", body, "[::-]")
 }

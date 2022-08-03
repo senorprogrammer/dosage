@@ -126,6 +126,7 @@ func (b *Base) Run() {
 func (b *Base) newTableView(title string) *tview.Table {
 	view := tview.NewTable()
 	view.SetBorder(true)
+	view.SetBorderPadding(0, 0, 1, 1)
 	view.SetTitle(title)
 
 	return view

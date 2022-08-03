@@ -22,7 +22,7 @@ type Droplets struct {
 // NewDroplets creates and returns an instance of Droplets
 func NewDroplets(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Droplets {
 	mod := &Droplets{
-		Base:     modules.NewBase(title, modules.WithTextView, refreshChan, 5*time.Second, logger),
+		Base:     modules.NewBase(title, modules.WithTableView, refreshChan, 5*time.Second, logger),
 		Droplets: []godo.Droplet{},
 		doClient: client,
 	}
@@ -78,32 +78,22 @@ func (d *Droplets) Refresh() {
 
 // Render draws the current string representation into the view
 func (d *Droplets) Render() {
-	str := d.ToStr()
-	d.GetView().(*tview.TextView).SetText(str)
-}
+	table := d.GetView().(*tview.Table)
+	table.Clear()
 
-// ToStr returns a string representation of the module suitable for display onscreen
-func (d *Droplets) ToStr() string {
-	if d.LastError != nil {
-		return d.LastError.Error()
+	for idx, header := range []string{"ID", "Name", "Status", "Region"} {
+		table.SetCell(0, idx, tview.NewTableCell(formatting.Bold(formatting.Underline(header))))
 	}
 
-	if len(d.Droplets) == 0 {
-		return modules.EmptyContentLabel
+	for idx, droplet := range d.Droplets {
+		dropletStatus := formatting.ColorForState(droplet.Status, droplet.Status)
+
+		row := idx + 1
+		table.SetCell(row, 0, tview.NewTableCell(fmt.Sprint(droplet.ID)))
+		table.SetCell(row, 1, tview.NewTableCell(droplet.Name))
+		table.SetCell(row, 2, tview.NewTableCell(dropletStatus))
+		table.SetCell(row, 3, tview.NewTableCell(droplet.Region.Slug))
 	}
-
-	str := ""
-
-	for _, droplet := range d.Droplets {
-		str += fmt.Sprintf(
-			"%10d\t%s\t%s\n",
-			droplet.ID,
-			droplet.Name,
-			formatting.ColorForState(droplet.Status, droplet.Status),
-		)
-	}
-
-	return str
 }
 
 /* -------------------- Unexported Functions -------------------- */

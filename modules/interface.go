@@ -17,5 +17,4 @@ type Module interface {
 	Refresh()
 	Render()
 	Run()
-	ToStr() string
 }
