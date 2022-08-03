@@ -8,6 +8,7 @@ import (
 	"github.com/senorprogrammer/dosage/core"
 	"github.com/senorprogrammer/dosage/flags"
 	"github.com/senorprogrammer/dosage/modules"
+	"github.com/senorprogrammer/dosage/services"
 	"github.com/senorprogrammer/dosage/splashscreen"
 
 	"github.com/rivo/tview"
@@ -50,7 +51,8 @@ func main() {
 
 	// Create the Servicer, which manages loading of services
 	servicer = core.NewServicer()
-	servicer.LoadServices(flags, tviewPages, refresher.RefreshChan, logger)
+	serviceOpts := services.NewServiceOptions(logger, refresher.RefreshChan)
+	servicer.LoadServices(flags, tviewPages, serviceOpts)
 
 	logger.Log("starting app...")
 

@@ -21,13 +21,13 @@ type DigitalOcean struct {
 }
 
 // NewDigitalOcean creates and returns an instance of a DigitalOcean page container
-func NewDigitalOcean(apiKey string, serviceOpts services.ServiceOptionable) *DigitalOcean {
+func NewDigitalOcean(apiKey string, serviceOpts *services.ServiceOptions) *DigitalOcean {
 	svc := &DigitalOcean{
-		Base:     services.NewBase(ServiceName, GridTitle, serviceOpts.GetLogger()),
+		Base:     services.NewBase(ServiceName, GridTitle, serviceOpts.Logger),
 		DOClient: godo.NewFromToken(apiKey),
 	}
 
-	svc.LoadModules(serviceOpts.GetRefreshChan())
+	svc.LoadModules(serviceOpts.RefreshChan)
 
 	return svc
 }
