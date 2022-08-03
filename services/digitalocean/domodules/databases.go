@@ -3,6 +3,7 @@ package domodules
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/digitalocean/godo"
@@ -22,7 +23,7 @@ type Databases struct {
 // NewDatabases creates and returns an instance of Databases
 func NewDatabases(title string, refreshChan chan bool, client *godo.Client, logger *modules.Logger) *Databases {
 	mod := &Databases{
-		Base:      modules.NewBase(title, modules.WithTextView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
+		Base:      modules.NewBase(title, modules.WithTableView, refreshChan, modules.DefaultRefreshSeconds*time.Second, logger),
 		Databases: []godo.Database{},
 		doClient:  client,
 	}
@@ -33,7 +34,7 @@ func NewDatabases(title string, refreshChan chan bool, client *godo.Client, logg
 		Row:       4,
 		Col:       3,
 		RowSpan:   2,
-		ColSpan:   9,
+		ColSpan:   7,
 		MinHeight: 0,
 		MinWidth:  0,
 	}
@@ -78,35 +79,31 @@ func (d *Databases) Refresh() {
 
 // Render draws the current string representation into the view
 func (d *Databases) Render() {
-	str := d.ToStr()
-	d.GetView().(*tview.TextView).SetText(str)
-}
+	table := d.GetView().(*tview.Table)
+	table.Clear()
 
-// ToStr returns a string representation of the module suitable for display onscreen
-func (d *Databases) ToStr() string {
+	if d.Databases == nil {
+		table.SetCell(0, 0, tview.NewTableCell("Databases are nil"))
+		return
+	}
+
 	if d.LastError != nil {
-		return d.LastError.Error()
+		table.SetCell(0, 0, tview.NewTableCell(d.LastError.Error()))
+		return
 	}
 
-	if len(d.Databases) == 0 {
-		return modules.EmptyContentLabel
+	for idx, header := range []string{"Name", "Size", "Status", "Engine", "Tags"} {
+		table.SetCell(0, idx, tview.NewTableCell(formatting.Bold(formatting.Underline(header))).SetAlign(tview.AlignCenter))
 	}
 
-	str := ""
-
-	for _, database := range d.Databases {
-		str += fmt.Sprintf(
-			"%s\t%s\t%s\t%s\t%s\t%v\n",
-			database.Name,
-			database.EngineSlug,
-			formatting.ColorForState(database.Status, database.Status),
-			database.SizeSlug,
-			database.RegionSlug,
-			database.Tags,
-		)
+	for idx, database := range d.Databases {
+		row := idx + 1
+		table.SetCell(row, 0, tview.NewTableCell(database.Name))
+		table.SetCell(row, 1, tview.NewTableCell(database.SizeSlug))
+		table.SetCell(row, 2, tview.NewTableCell(formatting.ColorForState(database.Status, database.Status)))
+		table.SetCell(row, 3, tview.NewTableCell(database.EngineSlug))
+		table.SetCell(row, 4, tview.NewTableCell(strings.Join(database.Tags, ", ")))
 	}
-
-	return str
 }
 
 /* -------------------- Unexported Functions -------------------- */

@@ -96,12 +96,10 @@ func (d *Droplets) Render() {
 	}
 
 	for idx, droplet := range d.Droplets {
-		dropletStatus := formatting.ColorForState(droplet.Status, droplet.Status)
-
 		row := idx + 1
 		table.SetCell(row, 0, tview.NewTableCell(fmt.Sprint(droplet.ID)).SetAlign(tview.AlignRight))
 		table.SetCell(row, 1, tview.NewTableCell(droplet.Name))
-		table.SetCell(row, 2, tview.NewTableCell(dropletStatus))
+		table.SetCell(row, 2, tview.NewTableCell(formatting.ColorForState(droplet.Status, droplet.Status)))
 		table.SetCell(row, 3, tview.NewTableCell(droplet.Region.Slug))
 	}
 }
