@@ -38,25 +38,15 @@ func NewDigitalOcean(apiKey string, serviceOpts *services.ServiceOptions) *Digit
 // Pass the logger in because it's common across everything and needs to
 // be instantiated before the rest of the modules
 func (d *DigitalOcean) LoadModules(refreshChan chan bool) {
-	account := domodules.NewAccount(" account ", refreshChan, d.DOClient, d.Logger)
-	billing := domodules.NewBilling(" billing ", refreshChan, d.DOClient, d.Logger)
-	certs := domodules.NewCertificates(" certs ", refreshChan, d.DOClient, d.Logger)
-	databases := domodules.NewDatabases(" databases ", refreshChan, d.DOClient, d.Logger)
-	droplets := domodules.NewDroplets(" droplets ", refreshChan, d.DOClient, d.Logger)
-	reservedIPs := domodules.NewReservedIPs(" reserved ips ", refreshChan, d.DOClient, d.Logger)
-	sshKeys := domodules.NewSSHKeys(" ssh keys ", refreshChan, d.DOClient, d.Logger)
-	storage := domodules.NewVolumes(" volumes ", refreshChan, d.DOClient, d.Logger)
-
 	d.Modules = append(d.Modules, d.Logger)
-
-	d.Modules = append(d.Modules, account)
-	d.Modules = append(d.Modules, billing)
-	d.Modules = append(d.Modules, certs)
-	d.Modules = append(d.Modules, databases)
-	d.Modules = append(d.Modules, droplets)
-	d.Modules = append(d.Modules, reservedIPs)
-	d.Modules = append(d.Modules, sshKeys)
-	d.Modules = append(d.Modules, storage)
+	d.Modules = append(d.Modules, domodules.NewAccount(" account ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewBilling(" billing ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewCertificates(" certs ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewDatabases(" databases ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewDroplets(" droplets ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewReservedIPs(" reserved ips ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewSSHKeys(" ssh keys ", refreshChan, d.DOClient, d.Logger))
+	d.Modules = append(d.Modules, domodules.NewVolumes(" volumes ", refreshChan, d.DOClient, d.Logger))
 
 	for _, mod := range d.Modules {
 		if !mod.GetEnabled() {
